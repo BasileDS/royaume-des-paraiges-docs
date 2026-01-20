@@ -6,9 +6,11 @@ Ce repository contient la documentation technique de l'application **Royaume des
 
 ```
 docs/
-├── claude/      # Documentation Claude AI
+├── claude/      # Guide de developpement IA
 ├── supabase/    # Documentation Supabase (Backend & BDD)
 └── directus/    # Documentation Directus (CMS)
+
+migrations/      # Scripts SQL de migration Supabase
 ```
 
 ## Utilisation comme Submodule
@@ -41,3 +43,6 @@ Documentation de la base de données, authentification, et services backend Supa
 
 ### Directus
 Documentation du CMS Directus pour la gestion de contenu.
+
+### Migrations
+Scripts SQL pour les migrations de la base de donnees Supabase. Voir [migrations/README.md](./migrations/README.md) pour les instructions d'execution.

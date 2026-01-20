@@ -19,6 +19,10 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 - **3 jobs pg_cron** pour distributions automatiques
 - **1 bucket storage** (avatars)
 
+## Migrations
+
+Les scripts de migration SQL sont disponibles dans le dossier [/migrations](../../migrations/).
+
 ## Ressources
 
 - [Documentation officielle Supabase](https://supabase.com/docs)

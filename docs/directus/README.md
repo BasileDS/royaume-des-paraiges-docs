@@ -2,18 +2,28 @@
 
 ## Introduction
 
-Cette section documente l'utilisation de Directus comme CMS pour le Royaume des Paraiges.
+Cette section documente l'utilisation de Directus comme CMS (headless) pour le Royaume des Paraiges.
 
-## Table des matières
+**URL**: `https://paraiges-directus.neodelta.dev`
+**SDK**: `@directus/sdk` v20.1.0
+**Mode**: READ-ONLY depuis l'application
 
-- [Configuration](./configuration.md)
-- [Collections](./collections.md)
-- [Permissions & Rôles](./permissions.md)
-- [API REST](./api-rest.md)
-- [Webhooks](./webhooks.md)
-- [Extensions](./extensions.md)
+## Table des matieres
+
+- [Configuration complete](./configuration.md) - Collections, types, services, requetes
+
+## Collections
+
+| Collection | Description |
+|------------|-------------|
+| `beers` | Catalogue des bieres |
+| `breweries` | Brasseries |
+| `establishments` | Etablissements partenaires |
+| `news` | Actualites |
+| `styles` | Styles de bieres |
+| `level_thresholds` | Niveaux et XP requis |
 
 ## Ressources
 
 - [Documentation officielle Directus](https://docs.directus.io/)
-- [API Reference](https://docs.directus.io/reference/introduction.html)
+- [Console Admin](https://paraiges-directus.neodelta.dev/admin)

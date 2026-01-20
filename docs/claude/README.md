@@ -1,16 +1,30 @@
-# Documentation Claude AI
+# Guide de Developpement IA
 
 ## Introduction
 
-Cette section documente l'intégration de Claude AI dans le Royaume des Paraiges.
+Cette section contient le guide de developpement pour les assistants IA (Claude) et les developpeurs travaillant sur le Royaume des Paraiges.
 
-## Table des matières
+## Table des matieres
 
-- [Configuration](./configuration.md)
-- [Intégration API](./api-integration.md)
-- [Cas d'usage](./use-cases.md)
+- [Configuration complete](./configuration.md) - Architecture, patterns, conventions
+
+## Stack Technique
+
+| Technologie | Version |
+|-------------|---------|
+| Expo SDK | 54.0.31 |
+| React | 19.1.0 |
+| React Native | 0.81.5 |
+| TypeScript | 5.9.2 |
+| Redux Toolkit | 2.8.2 |
+
+## Backend Services
+
+- **Supabase**: Auth, Database, Storage
+- **Directus**: CMS (Content Management)
 
 ## Ressources
 
-- [Documentation officielle Claude](https://docs.anthropic.com/)
-- [API Reference](https://docs.anthropic.com/en/api)
+- [Documentation Claude](https://docs.anthropic.com/)
+- [Expo Docs](https://docs.expo.dev)
+- [React Native](https://reactnative.dev)

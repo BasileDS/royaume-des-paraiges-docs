@@ -15,10 +15,10 @@ Cette documentation decrit la configuration complete de la base de donnees Supab
 ## Structure de la Documentation
 
 ```
-supabase/
-├── configuration.md            # Ce fichier
-├── tables/                     # Structure des tables
-│   ├── README.md              # Vue d'ensemble des tables
+supabase/docs/
+├── SUPABASE-CONFIG.md           # Ce fichier
+├── tables/                      # Structure des tables
+│   ├── README.md               # Vue d'ensemble des tables
 │   ├── profiles.md
 │   ├── receipts.md
 │   ├── receipt_lines.md
@@ -36,18 +36,19 @@ supabase/
 │   ├── user_badges.md
 │   ├── leaderboard_reward_distributions.md
 │   ├── period_closures.md
-│   └── constants.md
-├── functions/                  # Fonctions PostgreSQL
+│   ├── constants.md
+├── functions/                   # Fonctions PostgreSQL
+│   ├── README.md               # Index des fonctions
+│   └── ...
+├── triggers/                    # Triggers
 │   └── README.md
-├── triggers/                   # Triggers
+├── policies/                    # Politiques RLS
 │   └── README.md
-├── policies/                   # Politiques RLS
+├── views/                       # Vues et vues materialisees
 │   └── README.md
-├── views/                      # Vues et vues materialisees
+├── storage/                     # Buckets et policies storage
 │   └── README.md
-├── storage/                    # Buckets et policies storage
-│   └── README.md
-└── edge-functions/            # Edge Functions
+└── edge-functions/             # Edge Functions
     └── README.md
 ```
 
@@ -83,38 +84,35 @@ supabase/
 | `user_role` | `client`, `employee`, `establishment`, `admin` |
 | `payment_method` | `card`, `cash`, `cashback`, `coupon` |
 
-### Fonctions (28)
+### Fonctions (29)
 
 Fonctions principales :
+- `award_user_badge` - Attribue un badge a un utilisateur pour une periode donnee
+- `calculate_gains` - Calcule les gains XP et cashback
+- `check_cashback_balance` - Verifie le solde cashback d'un utilisateur
+- `check_email_exists` - Verifie si un email existe
+- `check_period_closed` - Verifie si une periode de leaderboard a deja ete fermee
+- `create_frequency_coupon` - Cree un coupon de frequence (5% si 10+ commandes/semaine)
+- `create_leaderboard_reward_coupon` - Cree un coupon de recompense leaderboard
+- `create_manual_coupon` - Cree un coupon manuellement
 - `create_receipt` - Cree un recu avec paiements, coupons et gains
-- `calculate_gains` - Calcul XP et cashback
-- `distribute_period_rewards_v2` - Distribution configurable des recompenses leaderboard
-- `create_manual_coupon` - Creation de coupon manuel
-- `get_period_preview` - Previsualisation des distributions
-- `get_coupon_stats` - Statistiques des coupons
-- `get_period_identifier` - Calcul identifiant de periode
-- `get_user_complete_stats` - Statistiques completes utilisateur
-- `get_user_cashback_balance` - Solde cashback utilisateur
-- `get_user_badges` - Badges d'un utilisateur
+- `create_spending_from_cashback_payment` - Trigger: cree un spending lors d'un paiement cashback
 
-Fonctions legacy :
-- `distribute_leaderboard_rewards` - Distribution auto des recompenses (legacy)
-- `create_weekly_coupon` - Coupon hebdomadaire automatique
-- `create_frequency_coupon` - Coupon frequence automatique
+... et 19 autres fonctions
 
 ### Triggers (1)
 
 | Trigger | Table | Description |
 |---------|-------|-------------|
-| `trigger_create_spending_on_cashback` | `receipt_lines` | Cree automatiquement un spending lors d'un paiement cashback |
+| `trigger_create_spending_on_cashback` | `receipt_lines` | Appelle `create_spending_from_cashback_payment` |
 
 ### Jobs pg_cron (3)
 
 | Job | Cron | Description |
 |-----|------|-------------|
-| Job 1 | `5 0 * * 1` | Distribution hebdomadaire (Lundi 00:05 UTC) |
-| Job 2 | `10 0 1 * *` | Distribution mensuelle (1er du mois 00:10 UTC) |
-| Job 3 | `15 0 1 1 *` | Distribution annuelle (1er janvier 00:15 UTC) |
+| Job 1 | `5 0 * * 1` | `SELECT distribute_period_rewards_v2('weekly')` |
+| Job 2 | `10 0 1 * *` | `SELECT distribute_period_rewards_v2('monthly')` |
+| Job 3 | `15 0 1 1 *` | `SELECT distribute_period_rewards_v2('yearly')` |
 
 ### Vues Materialisees (4)
 
@@ -133,7 +131,7 @@ Fonctions legacy :
 
 ### Edge Functions (1)
 
-- `send-contact-email` - Envoi d'emails de contact via Brevo (JWT: Oui)
+- `send-contact-email` - send-contact-email (JWT: Oui)
 
 ## Extensions Installees
 
@@ -163,7 +161,7 @@ auth.users
             ├──► spendings (customer_id)
             ├──► coupon_distribution_logs (customer_id, distributed_by)
             ├──► coupon_templates (created_by)
-            ├──► period_reward_configs (distributed_by, created_by)
+            ├──► period_reward_configs (distributed_by)
             │
             └──► receipts (customer_id)
                     │
@@ -184,65 +182,7 @@ coupon_templates ──► coupons (template_id)
 reward_tiers ──► coupon_distribution_logs (tier_id)
 ```
 
-## Flux de Donnees Principal
-
-```
-1. Client scanne ticket
-         │
-         ▼
-2. create_receipt() appelee
-         │
-         ├──► Validation coupons (validate_coupons)
-         ├──► Validation paiements (validate_payment_methods)
-         ├──► Verification cashback (check_cashback_balance)
-         │
-         ▼
-3. Creation receipt + receipt_lines
-         │
-         └──► Trigger: Si cashback → creation spending
-         │
-         ▼
-4. Calcul gains (calculate_gains)
-         │
-         ├──► Application coefficients profil (xp_coefficient, cashback_coefficient)
-         │
-         ▼
-5. Creation gain (XP + cashback)
-         │
-         ▼
-6. Refresh vues materialisees
-         │
-         └──► user_stats, weekly/monthly/yearly_xp_leaderboard
-```
-
-## Flux de Distribution des Recompenses
-
-```
-1. Job pg_cron declenche (ou admin manuel)
-         │
-         ▼
-2. distribute_period_rewards_v2() appelee
-         │
-         ├──► Recuperation leaderboard de la periode
-         ├──► Recuperation reward_tiers actifs
-         ├──► Verification period_reward_configs (custom_tiers ?)
-         │
-         ▼
-3. Pour chaque utilisateur du TOP N
-         │
-         ├──► Trouver le tier correspondant au rang
-         ├──► Creer coupon depuis le template
-         ├──► Attribuer badge si configure
-         ├──► Calculer date d'expiration
-         │
-         ▼
-4. Logging dans coupon_distribution_logs
-         │
-         ▼
-5. Creation period_closures avec stats
-```
-
 ## Derniere mise a jour
 
 - **Date** : 2026-01-21
-- **Generee par** : Claude via MCP Supabase
+- **Generee automatiquement** par `scripts/sync-supabase-docs.mjs`

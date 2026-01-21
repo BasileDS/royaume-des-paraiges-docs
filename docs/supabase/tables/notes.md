@@ -1,6 +1,6 @@
-# Table: likes
+# Table: notes
 
-Likes sur contenus
+Notes/evaluations
 
 ## Informations
 
@@ -8,7 +8,7 @@ Likes sur contenus
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 8 |
+| **Lignes** | 0 |
 
 ## Colonnes
 
@@ -16,10 +16,8 @@ Likes sur contenus
 |---------|------|----------|---------|-------------|
 | `id` | `bigint` | Non | - | - |
 | `created_at` | `timestamp with time zone` | Non | now() | - |
-| `beer_id` | `integer` | Oui | - | - |
-| `news_id` | `integer` | Oui | - | - |
-| `quest_id` | `integer` | Oui | - | - |
-| `user_id` | `uuid` | Non | - | - |
+| `customer_id` | `uuid` | Non | auth.uid() | - |
+| `note` | `integer` | Non | - | - |
 
 ## Cles primaires
 

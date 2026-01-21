@@ -148,8 +148,54 @@ async function executeSQL(query) {
 // ============================================================================
 
 async function fetchTables() {
+  // Use SQL query instead of REST API (more reliable)
+  const query = `
+    SELECT
+      c.relname as name,
+      n.nspname as schema,
+      c.reltuples::bigint as rows,
+      c.relrowsecurity as rls_enabled,
+      obj_description(c.oid, 'pg_class') as comment,
+      (
+        SELECT json_agg(json_build_object(
+          'name', a.attname,
+          'data_type', pg_catalog.format_type(a.atttypid, a.atttypmod),
+          'options', CASE WHEN a.attnotnull THEN ARRAY[]::text[] ELSE ARRAY['nullable'] END,
+          'default_value', pg_get_expr(d.adbin, d.adrelid),
+          'comment', col_description(c.oid, a.attnum)
+        ) ORDER BY a.attnum)
+        FROM pg_attribute a
+        LEFT JOIN pg_attrdef d ON d.adrelid = a.attrelid AND d.adnum = a.attnum
+        WHERE a.attrelid = c.oid AND a.attnum > 0 AND NOT a.attisdropped
+      ) as columns,
+      (
+        SELECT array_agg(a.attname ORDER BY u.seq)
+        FROM pg_constraint con
+        CROSS JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS u(attnum, seq)
+        JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = u.attnum
+        WHERE con.conrelid = c.oid AND con.contype = 'p'
+      ) as primary_keys,
+      (
+        SELECT json_agg(json_build_object(
+          'name', con.conname,
+          'source', a.attname,
+          'target', fc.relname || '.' || fa.attname
+        ))
+        FROM pg_constraint con
+        JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = ANY(con.conkey)
+        JOIN pg_class fc ON fc.oid = con.confrelid
+        JOIN pg_attribute fa ON fa.attrelid = con.confrelid AND fa.attnum = ANY(con.confkey)
+        WHERE con.conrelid = c.oid AND con.contype = 'f'
+      ) as foreign_key_constraints
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE c.relkind = 'r'
+    AND n.nspname = 'public'
+    ORDER BY c.relname;
+  `;
+
   try {
-    const response = await fetchSupabaseAPI(`/projects/${CONFIG.projectId}/database/tables?schemas=public`);
+    const response = await executeSQL(query);
     return response || [];
   } catch (error) {
     log(`Erreur lors de la recuperation des tables: ${error.message}`, 'red');
@@ -308,10 +354,21 @@ async function fetchEdgeFunctions() {
 }
 
 async function fetchExtensions() {
+  // Use SQL query instead of REST API (more reliable)
+  const query = `
+    SELECT
+      e.extname as name,
+      n.nspname as schema,
+      e.extversion as installed_version,
+      obj_description(e.oid, 'pg_extension') as comment
+    FROM pg_extension e
+    JOIN pg_namespace n ON n.oid = e.extnamespace
+    ORDER BY e.extname;
+  `;
+
   try {
-    const response = await fetchSupabaseAPI(`/projects/${CONFIG.projectId}/database/extensions`);
-    // Filtrer uniquement les extensions installees
-    return (response || []).filter(ext => ext.installed_version !== null);
+    const response = await executeSQL(query);
+    return response || [];
   } catch (error) {
     log(`Erreur lors de la recuperation des extensions: ${error.message}`, 'red');
     return [];
@@ -468,6 +525,18 @@ function generateTableMd(table) {
   const columns = table.columns || [];
   const foreignKeys = table.foreign_key_constraints || [];
 
+  // Handle primary_keys - could be array or PostgreSQL array string like "{id}"
+  let primaryKeys = [];
+  if (Array.isArray(table.primary_keys)) {
+    primaryKeys = table.primary_keys;
+  } else if (typeof table.primary_keys === 'string') {
+    // Parse PostgreSQL array format: "{id}" or "{col1,col2}"
+    const match = table.primary_keys.match(/\{([^}]*)\}/);
+    if (match) {
+      primaryKeys = match[1].split(',').filter(Boolean);
+    }
+  }
+
   let md = `# Table: ${table.name}
 
 ${table.comment || 'Pas de description disponible.'}
@@ -485,14 +554,15 @@ ${table.comment || 'Pas de description disponible.'}
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
 ${columns.map(c => {
-  const nullable = c.options?.includes('nullable') ? 'Oui' : 'Non';
+  const options = Array.isArray(c.options) ? c.options : [];
+  const nullable = options.includes('nullable') ? 'Oui' : 'Non';
   const defaultVal = c.default_value || '-';
   return `| \`${c.name}\` | \`${c.data_type}\` | ${nullable} | ${defaultVal} | ${c.comment || '-'} |`;
 }).join('\n')}
 
 ## Cles primaires
 
-${table.primary_keys?.map(pk => `- \`${pk}\``).join('\n') || 'Aucune'}
+${primaryKeys.length > 0 ? primaryKeys.map(pk => `- \`${pk}\``).join('\n') : 'Aucune'}
 
 ## Relations (Foreign Keys)
 

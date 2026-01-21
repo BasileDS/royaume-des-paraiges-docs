@@ -1,89 +1,2582 @@
 {
-  "generatedAt": "2026-01-21T00:00:00.000Z",
-  "generatedBy": "Claude MCP",
-  "projectId": "uflgfsoekkgegdgecubb",
   "tables": [
-    {"schema":"public","name":"profiles","rls_enabled":true,"rows":17,"columns":[{"name":"id","data_type":"uuid","options":["updatable"],"default_value":"gen_random_uuid()"},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"attached_establishment_id","data_type":"integer","options":["nullable","updatable"]},{"name":"email","data_type":"text","options":["nullable","updatable"],"comment":"Email de l'utilisateur"},{"name":"first_name","data_type":"text","options":["nullable","updatable"],"comment":"Prenom"},{"name":"last_name","data_type":"text","options":["nullable","updatable"],"comment":"Nom de famille"},{"name":"avatar_url","data_type":"text","options":["nullable","updatable"],"comment":"URL de la photo de profil"},{"name":"phone","data_type":"text","options":["nullable","updatable"],"comment":"Numero de telephone"},{"name":"birthdate","data_type":"date","options":["nullable","updatable"],"comment":"Date de naissance"},{"name":"updated_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"username","data_type":"text","options":["nullable","updatable","unique"]},{"name":"role","data_type":"user_role","options":["updatable"],"default_value":"'client'::user_role"},{"name":"xp_coefficient","data_type":"integer","options":["updatable"],"default_value":"100"},{"name":"cashback_coefficient","data_type":"integer","options":["updatable"],"default_value":"100"}],"primary_keys":["id"],"comment":"Profils utilisateurs lies a auth.users"},
-    {"schema":"public","name":"receipts","rls_enabled":true,"rows":55,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"amount","data_type":"integer","options":["updatable"]},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"establishment_id","data_type":"integer","options":["updatable"]}],"primary_keys":["id"],"comment":"Tickets de caisse"},
-    {"schema":"public","name":"receipt_lines","rls_enabled":true,"rows":55,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"amount","data_type":"integer","options":["updatable"]},{"name":"payment_method","data_type":"payment_method","options":["updatable"]},{"name":"receipt_id","data_type":"bigint","options":["updatable"]}],"primary_keys":["id"],"comment":"Lignes de paiement des tickets"},
-    {"schema":"public","name":"gains","rls_enabled":true,"rows":55,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"receipt_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"xp","data_type":"integer","options":["nullable","updatable"]},{"name":"cashback_money","data_type":"integer","options":["nullable","updatable"]},{"name":"establishment_id","data_type":"integer","options":["updatable"]}],"primary_keys":["id"],"comment":"XP et cashback gagnes"},
-    {"schema":"public","name":"spendings","rls_enabled":true,"rows":5,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"amount","data_type":"integer","options":["updatable"]},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"establishment_id","data_type":"integer","options":["updatable"]},{"name":"receipt_id","data_type":"bigint","options":["nullable","updatable"]}],"primary_keys":["id"],"comment":"Depenses cashback"},
-    {"schema":"public","name":"coupons","rls_enabled":true,"rows":2,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"used","data_type":"boolean","options":["updatable"],"default_value":"false"},{"name":"amount","data_type":"integer","options":["nullable","updatable"]},{"name":"percentage","data_type":"integer","options":["nullable","updatable"]},{"name":"template_id","data_type":"bigint","options":["nullable","updatable"],"comment":"Reference au template"},{"name":"expires_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"comment":"Date d'expiration"},{"name":"distribution_type","data_type":"varchar","options":["nullable","updatable"],"comment":"Type de distribution"},{"name":"period_identifier","data_type":"varchar","options":["nullable","updatable"],"comment":"Identifiant de periode"}],"primary_keys":["id"],"comment":"Coupons de reduction utilisateurs"},
-    {"schema":"public","name":"coupon_templates","rls_enabled":true,"rows":23,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"name","data_type":"varchar","options":["updatable"]},{"name":"description","data_type":"text","options":["nullable","updatable"]},{"name":"amount","data_type":"integer","options":["nullable","updatable"],"comment":"Montant en centimes"},{"name":"percentage","data_type":"integer","options":["nullable","updatable"],"comment":"Pourcentage de reduction"},{"name":"establishment_id","data_type":"integer","options":["nullable","updatable"],"comment":"ID etablissement Directus"},{"name":"validity_days","data_type":"integer","options":["nullable","updatable"],"comment":"Jours de validite"},{"name":"is_active","data_type":"boolean","options":["nullable","updatable"],"default_value":"true"},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"updated_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"created_by","data_type":"uuid","options":["nullable","updatable"]}],"primary_keys":["id"],"comment":"Modeles de coupons reutilisables"},
-    {"schema":"public","name":"reward_tiers","rls_enabled":true,"rows":6,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"name","data_type":"varchar","options":["updatable"]},{"name":"rank_from","data_type":"integer","options":["updatable"],"comment":"Rang minimum inclus"},{"name":"rank_to","data_type":"integer","options":["updatable"],"comment":"Rang maximum inclus"},{"name":"coupon_template_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"badge_type_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"period_type","data_type":"varchar","options":["updatable"],"comment":"Type de periode: weekly, monthly, yearly"},{"name":"display_order","data_type":"integer","options":["nullable","updatable"],"default_value":"0"},{"name":"is_active","data_type":"boolean","options":["nullable","updatable"],"default_value":"true"},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"updated_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"}],"primary_keys":["id"],"comment":"Paliers de recompenses leaderboard"},
-    {"schema":"public","name":"period_reward_configs","rls_enabled":true,"rows":0,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"period_type","data_type":"varchar","options":["updatable"]},{"name":"period_identifier","data_type":"varchar","options":["updatable"],"comment":"Identifiant de periode"},{"name":"custom_tiers","data_type":"jsonb","options":["nullable","updatable"],"comment":"Surcharge des reward_tiers"},{"name":"status","data_type":"varchar","options":["nullable","updatable"],"default_value":"'pending'::varchar","comment":"pending, scheduled, distributed, cancelled"},{"name":"scheduled_at","data_type":"timestamp with time zone","options":["nullable","updatable"]},{"name":"distributed_at","data_type":"timestamp with time zone","options":["nullable","updatable"]},{"name":"distributed_by","data_type":"uuid","options":["nullable","updatable"]},{"name":"notes","data_type":"text","options":["nullable","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"updated_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"created_by","data_type":"uuid","options":["nullable","updatable"]}],"primary_keys":["id"],"comment":"Config personnalisee par periode"},
-    {"schema":"public","name":"coupon_distribution_logs","rls_enabled":true,"rows":2,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"distribution_type","data_type":"varchar","options":["updatable"],"comment":"Type de distribution"},{"name":"period_identifier","data_type":"varchar","options":["nullable","updatable"]},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"coupon_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"coupon_template_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"coupon_amount","data_type":"integer","options":["nullable","updatable"]},{"name":"coupon_percentage","data_type":"integer","options":["nullable","updatable"]},{"name":"coupon_establishment_id","data_type":"integer","options":["nullable","updatable"]},{"name":"coupon_expires_at","data_type":"timestamp with time zone","options":["nullable","updatable"]},{"name":"rank","data_type":"integer","options":["nullable","updatable"]},{"name":"tier_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"tier_name","data_type":"varchar","options":["nullable","updatable"]},{"name":"xp_at_distribution","data_type":"integer","options":["nullable","updatable"]},{"name":"badge_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"user_badge_id","data_type":"bigint","options":["nullable","updatable"]},{"name":"distributed_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"distributed_by","data_type":"uuid","options":["nullable","updatable"],"comment":"UUID admin si manuel"},{"name":"notes","data_type":"text","options":["nullable","updatable"]},{"name":"status","data_type":"varchar","options":["nullable","updatable"],"default_value":"'success'::varchar"}],"primary_keys":["id"],"comment":"Historique des distributions"},
-    {"schema":"public","name":"likes","rls_enabled":true,"rows":8,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"beer_id","data_type":"integer","options":["nullable","updatable"]},{"name":"news_id","data_type":"integer","options":["nullable","updatable"]},{"name":"quest_id","data_type":"integer","options":["nullable","updatable"]},{"name":"user_id","data_type":"uuid","options":["updatable"]}],"primary_keys":["id"],"comment":"Likes sur contenus"},
-    {"schema":"public","name":"comments","rls_enabled":true,"rows":2,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"beer_id","data_type":"integer","options":["nullable","updatable"]},{"name":"news_id","data_type":"integer","options":["nullable","updatable"]},{"name":"quest_id","data_type":"integer","options":["nullable","updatable"]},{"name":"establishment_id","data_type":"integer","options":["nullable","updatable"]},{"name":"hidden","data_type":"boolean","options":["updatable"],"default_value":"false"},{"name":"content","data_type":"text","options":["nullable","updatable"]}],"primary_keys":["id"],"comment":"Commentaires"},
-    {"schema":"public","name":"notes","rls_enabled":true,"rows":0,"columns":[{"name":"id","data_type":"bigint","options":["identity","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["updatable"],"default_value":"now()"},{"name":"customer_id","data_type":"uuid","options":["updatable"],"default_value":"auth.uid()"},{"name":"note","data_type":"integer","options":["updatable"]}],"primary_keys":["id"],"comment":"Notes/evaluations"},
-    {"schema":"public","name":"badge_types","rls_enabled":true,"rows":9,"columns":[{"name":"id","data_type":"integer","options":["updatable"]},{"name":"slug","data_type":"varchar","options":["updatable","unique"],"comment":"Identifiant unique du badge"},{"name":"name","data_type":"varchar","options":["updatable"]},{"name":"description","data_type":"text","options":["nullable","updatable"]},{"name":"icon","data_type":"varchar","options":["nullable","updatable"]},{"name":"rarity","data_type":"varchar","options":["nullable","updatable"],"comment":"common, rare, epic, legendary"},{"name":"category","data_type":"varchar","options":["nullable","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"}],"primary_keys":["id"],"comment":"Definitions des badges"},
-    {"schema":"public","name":"user_badges","rls_enabled":true,"rows":2,"columns":[{"name":"id","data_type":"integer","options":["updatable"]},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"badge_id","data_type":"integer","options":["updatable"]},{"name":"earned_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"period_type","data_type":"varchar","options":["nullable","updatable"]},{"name":"period_identifier","data_type":"varchar","options":["nullable","updatable"],"comment":"Identifiant de periode"},{"name":"rank","data_type":"integer","options":["nullable","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"}],"primary_keys":["id"],"comment":"Badges obtenus par utilisateur"},
-    {"schema":"public","name":"leaderboard_reward_distributions","rls_enabled":true,"rows":0,"columns":[{"name":"id","data_type":"integer","options":["updatable"]},{"name":"customer_id","data_type":"uuid","options":["updatable"]},{"name":"period_type","data_type":"varchar","options":["updatable"]},{"name":"period_identifier","data_type":"varchar","options":["updatable"]},{"name":"rank","data_type":"integer","options":["updatable"]},{"name":"coupon_amount_id","data_type":"integer","options":["nullable","updatable"]},{"name":"coupon_percentage_id","data_type":"integer","options":["nullable","updatable"]},{"name":"badge_ids","data_type":"integer[]","options":["nullable","updatable"],"default_value":"ARRAY[]::integer[]","comment":"IDs de badges attribues"},{"name":"distributed_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"distribution_status","data_type":"varchar","options":["nullable","updatable"],"default_value":"'success'::varchar"},{"name":"error_message","data_type":"text","options":["nullable","updatable"]},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"}],"primary_keys":["id"],"comment":"Historique recompenses leaderboard"},
-    {"schema":"public","name":"period_closures","rls_enabled":true,"rows":1,"columns":[{"name":"id","data_type":"integer","options":["updatable"]},{"name":"period_type","data_type":"varchar","options":["updatable"]},{"name":"period_identifier","data_type":"varchar","options":["updatable"]},{"name":"closed_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"},{"name":"rewards_distributed_count","data_type":"integer","options":["nullable","updatable"],"default_value":"0"},{"name":"total_eligible_users","data_type":"integer","options":["nullable","updatable"],"default_value":"0"},{"name":"distribution_duration_ms","data_type":"integer","options":["nullable","updatable"],"comment":"Temps de traitement en ms"},{"name":"status","data_type":"varchar","options":["nullable","updatable"],"default_value":"'success'::varchar"},{"name":"error_logs","data_type":"jsonb","options":["nullable","updatable"],"default_value":"'[]'::jsonb"},{"name":"created_at","data_type":"timestamp with time zone","options":["nullable","updatable"],"default_value":"now()"}],"primary_keys":["id"],"comment":"Clotures de periodes"},
-    {"schema":"public","name":"constants","rls_enabled":true,"rows":2,"columns":[{"name":"key","data_type":"varchar","options":["updatable"]},{"name":"value","data_type":"text","options":["updatable"]}],"primary_keys":["key"],"comment":"Constantes de configuration"}
+    {
+      "name": "available_periods",
+      "schema": "public",
+      "rows": 130,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "start_date",
+          "data_type": "date",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "end_date",
+          "data_type": "date",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": null
+    },
+    {
+      "name": "badge_types",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Définitions des badges disponibles dans le système",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "nextval('badge_types_id_seq'::regclass)",
+          "comment": null
+        },
+        {
+          "name": "slug",
+          "data_type": "character varying(100)",
+          "options": [],
+          "default_value": null,
+          "comment": "Identifiant unique du badge (ex: weekly_champion)"
+        },
+        {
+          "name": "name",
+          "data_type": "character varying(200)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "icon",
+          "data_type": "character varying(50)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "rarity",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Rareté du badge (common, rare, epic, legendary)"
+        },
+        {
+          "name": "category",
+          "data_type": "character varying(50)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": null
+    },
+    {
+      "name": "comments",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "beer_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "news_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "establishment_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "hidden",
+          "data_type": "boolean",
+          "options": [],
+          "default_value": "false",
+          "comment": null
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "comments_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "constants",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "key",
+          "data_type": "character varying",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "value",
+          "data_type": "text",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{key}",
+      "foreign_key_constraints": null
+    },
+    {
+      "name": "coupon_distribution_logs",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Historique complet de toutes les distributions de coupons",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "distribution_type",
+          "data_type": "character varying(50)",
+          "options": [],
+          "default_value": null,
+          "comment": "Type: leaderboard_weekly, leaderboard_monthly, leaderboard_yearly, manual"
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_template_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_amount",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_percentage",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_establishment_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_expires_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "rank",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "tier_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "tier_name",
+          "data_type": "character varying(100)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "xp_at_distribution",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "user_badge_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "distributed_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "distributed_by",
+          "data_type": "uuid",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "UUID admin si manuel, NULL si automatique (cron)"
+        },
+        {
+          "name": "notes",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "status",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "'success'::character varying",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "coupon_distribution_logs_badge_id_fkey",
+          "source": "badge_id",
+          "target": "badge_types.id"
+        },
+        {
+          "name": "coupon_distribution_logs_coupon_id_fkey",
+          "source": "coupon_id",
+          "target": "coupons.id"
+        },
+        {
+          "name": "coupon_distribution_logs_coupon_template_id_fkey",
+          "source": "coupon_template_id",
+          "target": "coupon_templates.id"
+        },
+        {
+          "name": "coupon_distribution_logs_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        },
+        {
+          "name": "coupon_distribution_logs_distributed_by_fkey",
+          "source": "distributed_by",
+          "target": "profiles.id"
+        },
+        {
+          "name": "coupon_distribution_logs_tier_id_fkey",
+          "source": "tier_id",
+          "target": "reward_tiers.id"
+        },
+        {
+          "name": "coupon_distribution_logs_user_badge_id_fkey",
+          "source": "user_badge_id",
+          "target": "user_badges.id"
+        }
+      ]
+    },
+    {
+      "name": "coupon_templates",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Modèles de coupons réutilisables pour les récompenses",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying(255)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "amount",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Montant en centimes (ex: 1000 = 10€)"
+        },
+        {
+          "name": "percentage",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Pourcentage de réduction (ex: 15 = 15%)"
+        },
+        {
+          "name": "establishment_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "ID établissement Directus. NULL = valable partout"
+        },
+        {
+          "name": "validity_days",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Jours de validité après attribution. NULL = pas d'expiration"
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "true",
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "created_by",
+          "data_type": "uuid",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "coupon_templates_created_by_fkey",
+          "source": "created_by",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "coupons",
+      "schema": "public",
+      "rows": 4,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "used",
+          "data_type": "boolean",
+          "options": [],
+          "default_value": "false",
+          "comment": null
+        },
+        {
+          "name": "amount",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "percentage",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "template_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Référence au template utilisé pour créer ce coupon"
+        },
+        {
+          "name": "expires_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Date d'expiration du coupon. NULL = pas d'expiration"
+        },
+        {
+          "name": "distribution_type",
+          "data_type": "character varying(50)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Type de distribution: leaderboard_weekly, leaderboard_monthly, manual, trigger_legacy"
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Identifiant de période pour traçabilité (ex: 2026-W04)"
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "coupons_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        },
+        {
+          "name": "coupons_template_id_fkey",
+          "source": "template_id",
+          "target": "coupon_templates.id"
+        }
+      ]
+    },
+    {
+      "name": "gains",
+      "schema": "public",
+      "rows": 42,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "receipt_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "xp",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "cashback_money",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "establishment_id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "gains_receipt_id_fkey",
+          "source": "receipt_id",
+          "target": "receipts.id"
+        }
+      ]
+    },
+    {
+      "name": "leaderboard_reward_distributions",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Historique des récompenses distribuées aux gagnants du leaderboard",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "nextval('leaderboard_reward_distributions_id_seq'::regclass)",
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(50)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "rank",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_amount_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_percentage_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_ids",
+          "data_type": "integer[]",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "ARRAY[]::integer[]",
+          "comment": "Array des IDs de badges attribués lors de cette distribution"
+        },
+        {
+          "name": "distributed_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "distribution_status",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "'success'::character varying",
+          "comment": null
+        },
+        {
+          "name": "error_message",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "leaderboard_reward_distributions_coupon_amount_id_fkey",
+          "source": "coupon_amount_id",
+          "target": "coupons.id"
+        },
+        {
+          "name": "leaderboard_reward_distributions_coupon_percentage_id_fkey",
+          "source": "coupon_percentage_id",
+          "target": "coupons.id"
+        },
+        {
+          "name": "leaderboard_reward_distributions_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "likes",
+      "schema": "public",
+      "rows": 0,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "beer_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "news_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "user_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "likes_user_id_fkey",
+          "source": "user_id",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "notes",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": "auth.uid()",
+          "comment": null
+        },
+        {
+          "name": "note",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "notes_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "period_closures",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Tracking des périodes de leaderboard fermées et récompenses distribuées",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "nextval('period_closures_id_seq'::regclass)",
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(50)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "closed_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "rewards_distributed_count",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "total_eligible_users",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "distribution_duration_ms",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Temps de traitement de la distribution en millisecondes"
+        },
+        {
+          "name": "status",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "'success'::character varying",
+          "comment": null
+        },
+        {
+          "name": "error_logs",
+          "data_type": "jsonb",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "'[]'::jsonb",
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": null
+    },
+    {
+      "name": "period_reward_configs",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Configuration personnalisée des récompenses pour une période spécifique",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": "Identifiant de période: 2026-W04 (semaine), 2026-01 (mois), 2026 (année)"
+        },
+        {
+          "name": "custom_tiers",
+          "data_type": "jsonb",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "JSON: surcharge des reward_tiers par défaut pour cette période"
+        },
+        {
+          "name": "status",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "'pending'::character varying",
+          "comment": "pending=à distribuer, scheduled=planifié, distributed=fait, cancelled=annulé"
+        },
+        {
+          "name": "scheduled_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "distributed_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "distributed_by",
+          "data_type": "uuid",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "notes",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "created_by",
+          "data_type": "uuid",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "period_reward_configs_created_by_fkey",
+          "source": "created_by",
+          "target": "profiles.id"
+        },
+        {
+          "name": "period_reward_configs_distributed_by_fkey",
+          "source": "distributed_by",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "profiles",
+      "schema": "public",
+      "rows": 18,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": "gen_random_uuid()",
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "attached_establishment_id",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "email",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Email de l'utilisateur (synchronisé depuis auth.users)"
+        },
+        {
+          "name": "first_name",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Prénom (peut être extrait de full_name)"
+        },
+        {
+          "name": "last_name",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Nom de famille (peut être extrait de full_name)"
+        },
+        {
+          "name": "avatar_url",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "URL de la photo de profil"
+        },
+        {
+          "name": "phone",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Numéro de téléphone"
+        },
+        {
+          "name": "birthdate",
+          "data_type": "date",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Date de naissance"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "username",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "role",
+          "data_type": "user_role",
+          "options": [],
+          "default_value": "'client'::user_role",
+          "comment": null
+        },
+        {
+          "name": "xp_coefficient",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "100",
+          "comment": null
+        },
+        {
+          "name": "cashback_coefficient",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "100",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": null
+    },
+    {
+      "name": "quest_completion_logs",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Historique detaille de toutes les completions de quetes avec recompenses",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_progress_id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_template_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_awarded_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "bonus_xp_awarded",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "bonus_cashback_awarded",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "final_value",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "target_value",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "completed_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "quest_completion_logs_badge_awarded_id_fkey",
+          "source": "badge_awarded_id",
+          "target": "user_badges.id"
+        },
+        {
+          "name": "quest_completion_logs_coupon_id_fkey",
+          "source": "coupon_id",
+          "target": "coupons.id"
+        },
+        {
+          "name": "quest_completion_logs_coupon_template_id_fkey",
+          "source": "coupon_template_id",
+          "target": "coupon_templates.id"
+        },
+        {
+          "name": "quest_completion_logs_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        },
+        {
+          "name": "quest_completion_logs_quest_id_fkey",
+          "source": "quest_id",
+          "target": "quests.id"
+        },
+        {
+          "name": "quest_completion_logs_quest_progress_id_fkey",
+          "source": "quest_progress_id",
+          "target": "quest_progress.id"
+        }
+      ]
+    },
+    {
+      "name": "quest_periods",
+      "schema": "public",
+      "rows": 0,
+      "rls_enabled": true,
+      "comment": "Table de liaison pour assigner des quêtes à des périodes spécifiques (ex: 2026-W05, 2026-01, 2026)",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": "Identifiant de période au format YYYY-Www (weekly), YYYY-MM (monthly), ou YYYY (yearly)"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "quest_periods_quest_id_fkey",
+          "source": "quest_id",
+          "target": "quests.id"
+        }
+      ]
+    },
+    {
+      "name": "quest_progress",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Suivi de la progression des utilisateurs sur les quetes",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "current_value",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "target_value",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "status",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": "'in_progress'::character varying",
+          "comment": "in_progress: en cours, completed: objectif atteint mais pas encore recompense, rewarded: recompenses distribuees"
+        },
+        {
+          "name": "completed_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "rewarded_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "quest_progress_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        },
+        {
+          "name": "quest_progress_quest_id_fkey",
+          "source": "quest_id",
+          "target": "quests.id"
+        }
+      ]
+    },
+    {
+      "name": "quests",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Definition des quetes periodiques disponibles",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying(255)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "slug",
+          "data_type": "character varying(100)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "quest_type",
+          "data_type": "character varying(50)",
+          "options": [],
+          "default_value": null,
+          "comment": "Type: scan_receipts (scanner X tickets), earn_xp (gagner X XP), visit_establishments (visiter X etablissements)"
+        },
+        {
+          "name": "target_value",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": "Objectif a atteindre (nombre de tickets, XP, ou etablissements)"
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "coupon_template_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_type_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "bonus_xp",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": "XP bonus attribue en plus des gains normaux"
+        },
+        {
+          "name": "bonus_cashback",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": "Cashback bonus en centimes attribue en plus"
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "options": [],
+          "default_value": "true",
+          "comment": null
+        },
+        {
+          "name": "display_order",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "created_by",
+          "data_type": "uuid",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "quests_badge_type_id_fkey",
+          "source": "badge_type_id",
+          "target": "badge_types.id"
+        },
+        {
+          "name": "quests_coupon_template_id_fkey",
+          "source": "coupon_template_id",
+          "target": "coupon_templates.id"
+        },
+        {
+          "name": "quests_created_by_fkey",
+          "source": "created_by",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "receipt_lines",
+      "schema": "public",
+      "rows": 42,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "amount",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "payment_method",
+          "data_type": "payment_method",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "receipt_id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "receipt_lines_receipt_id_fkey",
+          "source": "receipt_id",
+          "target": "receipts.id"
+        }
+      ]
+    },
+    {
+      "name": "receipts",
+      "schema": "public",
+      "rows": 42,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "amount",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "establishment_id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "receipts_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        }
+      ]
+    },
+    {
+      "name": "reward_tiers",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Paliers de récompenses pour le leaderboard (configurable par rang)",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying(100)",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "rank_from",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": "Rang minimum inclus (ex: 1 pour le 1er)"
+        },
+        {
+          "name": "rank_to",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": "Rang maximum inclus (ex: 3 pour les rangs 1-3)"
+        },
+        {
+          "name": "coupon_template_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_type_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [],
+          "default_value": null,
+          "comment": "Type de période: weekly, monthly, yearly"
+        },
+        {
+          "name": "display_order",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "0",
+          "comment": null
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "true",
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "reward_tiers_badge_type_id_fkey",
+          "source": "badge_type_id",
+          "target": "badge_types.id"
+        },
+        {
+          "name": "reward_tiers_coupon_template_id_fkey",
+          "source": "coupon_template_id",
+          "target": "coupon_templates.id"
+        }
+      ]
+    },
+    {
+      "name": "spendings",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": null,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "bigint",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "amount",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "establishment_id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "receipt_id",
+          "data_type": "bigint",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "spendings_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        },
+        {
+          "name": "spendings_receipt_id_fkey",
+          "source": "receipt_id",
+          "target": "receipts.id"
+        }
+      ]
+    },
+    {
+      "name": "user_badges",
+      "schema": "public",
+      "rows": -1,
+      "rls_enabled": true,
+      "comment": "Collection des badges obtenus par chaque utilisateur",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": "nextval('user_badges_id_seq'::regclass)",
+          "comment": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "uuid",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "badge_id",
+          "data_type": "integer",
+          "options": [],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "earned_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        },
+        {
+          "name": "period_type",
+          "data_type": "character varying(20)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "period_identifier",
+          "data_type": "character varying(50)",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": "Identifiant de période (2025-W03 pour semaine, 2025-01 pour mois, 2025 pour année)"
+        },
+        {
+          "name": "rank",
+          "data_type": "integer",
+          "options": [
+            "nullable"
+          ],
+          "default_value": null,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "options": [
+            "nullable"
+          ],
+          "default_value": "now()",
+          "comment": null
+        }
+      ],
+      "primary_keys": "{id}",
+      "foreign_key_constraints": [
+        {
+          "name": "user_badges_badge_id_fkey",
+          "source": "badge_id",
+          "target": "badge_types.id"
+        },
+        {
+          "name": "user_badges_customer_id_fkey",
+          "source": "customer_id",
+          "target": "profiles.id"
+        }
+      ]
+    }
   ],
   "functions": [
-    {"function_name":"award_user_badge","arguments":"p_customer_id uuid, p_badge_slug varchar, p_period_type varchar, p_period_identifier varchar, p_rank bigint","return_type":"json","volatility":"VOLATILE","security_definer":true,"description":"Attribue un badge a un utilisateur pour une periode donnee"},
-    {"function_name":"calculate_gains","arguments":"p_amount_for_gains integer","return_type":"jsonb","volatility":"VOLATILE","security_definer":false,"description":"Calcule les gains XP et cashback"},
-    {"function_name":"check_cashback_balance","arguments":"p_customer_id uuid, p_cashback_requested integer","return_type":"jsonb","volatility":"VOLATILE","security_definer":false,"description":"Verifie le solde cashback d'un utilisateur"},
-    {"function_name":"check_email_exists","arguments":"email_to_check text","return_type":"boolean","volatility":"VOLATILE","security_definer":true,"description":"Verifie si un email existe"},
-    {"function_name":"check_period_closed","arguments":"p_period_type varchar, p_period_identifier varchar","return_type":"boolean","volatility":"VOLATILE","security_definer":false,"description":"Verifie si une periode de leaderboard a deja ete fermee"},
-    {"function_name":"create_frequency_coupon","arguments":"p_customer_id uuid","return_type":"json","volatility":"VOLATILE","security_definer":true,"description":"Cree un coupon de frequence (5% si 10+ commandes/semaine)"},
-    {"function_name":"create_leaderboard_reward_coupon","arguments":"p_customer_id uuid, p_amount integer, p_percentage integer","return_type":"json","volatility":"VOLATILE","security_definer":true,"description":"Cree un coupon de recompense leaderboard"},
-    {"function_name":"create_manual_coupon","arguments":"p_customer_id uuid, p_template_id bigint, p_amount integer, p_percentage integer, p_expires_at timestamptz, p_validity_days integer, p_notes text, p_admin_id uuid","return_type":"jsonb","volatility":"VOLATILE","security_definer":true,"description":"Cree un coupon manuellement"},
-    {"function_name":"create_receipt","arguments":"p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[]","return_type":"jsonb","volatility":"VOLATILE","security_definer":true,"description":"Cree un recu avec paiements, coupons et gains"},
-    {"function_name":"create_spending_from_cashback_payment","arguments":"","return_type":"trigger","volatility":"VOLATILE","security_definer":false,"description":"Trigger: cree un spending lors d'un paiement cashback"},
-    {"function_name":"create_weekly_coupon","arguments":"p_customer_id uuid","return_type":"json","volatility":"VOLATILE","security_definer":true,"description":"Cree un coupon hebdomadaire (3,90EUR si 50EUR+ depenses)"},
-    {"function_name":"distribute_leaderboard_rewards","arguments":"p_period_type varchar, p_force boolean","return_type":"json","volatility":"VOLATILE","security_definer":true,"description":"Distribue les recompenses leaderboard (legacy)"},
-    {"function_name":"distribute_period_rewards_v2","arguments":"p_period_type varchar, p_period_identifier varchar, p_force boolean, p_preview_only boolean, p_admin_id uuid","return_type":"jsonb","volatility":"VOLATILE","security_definer":true,"description":"Distribution configurable des recompenses avec tiers"},
-    {"function_name":"get_coupon_stats","arguments":"","return_type":"jsonb","volatility":"VOLATILE","security_definer":true,"description":"Statistiques globales des coupons"},
-    {"function_name":"get_current_user_role","arguments":"","return_type":"text","volatility":"VOLATILE","security_definer":true,"description":"Retourne le role de l'utilisateur courant"},
-    {"function_name":"get_customer_available_coupons","arguments":"p_customer_id uuid","return_type":"TABLE","volatility":"VOLATILE","security_definer":true,"description":"Coupons disponibles d'un client"},
-    {"function_name":"get_period_identifier","arguments":"p_period_type varchar, p_date timestamptz","return_type":"varchar","volatility":"IMMUTABLE","security_definer":false,"description":"Calcule l'identifiant de periode (2026-W04, 2026-01, 2026)"},
-    {"function_name":"get_period_preview","arguments":"p_period_type varchar, p_period_identifier varchar","return_type":"jsonb","volatility":"VOLATILE","security_definer":true,"description":"Previsualise la distribution des recompenses"},
-    {"function_name":"get_user_badges","arguments":"p_customer_id uuid","return_type":"TABLE","volatility":"VOLATILE","security_definer":false,"description":"Recupere tous les badges d'un utilisateur"},
-    {"function_name":"get_user_cashback_balance","arguments":"p_customer_id uuid","return_type":"jsonb","volatility":"STABLE","security_definer":false,"description":"Solde cashback depuis la vue materialisee"},
-    {"function_name":"get_user_complete_stats","arguments":"p_customer_id uuid","return_type":"jsonb","volatility":"STABLE","security_definer":false,"description":"Statistiques completes d'un utilisateur"},
-    {"function_name":"get_user_info","arguments":"user_ids uuid[]","return_type":"TABLE","volatility":"VOLATILE","security_definer":true,"description":"Informations utilisateur par IDs"},
-    {"function_name":"get_user_xp_stats","arguments":"p_customer_id uuid","return_type":"jsonb","volatility":"STABLE","security_definer":false,"description":"Statistiques XP d'un utilisateur"},
-    {"function_name":"handle_new_user","arguments":"","return_type":"trigger","volatility":"VOLATILE","security_definer":true,"description":"Cree un profil lors de la creation d'un utilisateur"},
-    {"function_name":"handle_user_delete","arguments":"","return_type":"trigger","volatility":"VOLATILE","security_definer":true,"description":"Supprime le profil lors de la suppression d'un utilisateur"},
-    {"function_name":"sync_auth_to_profiles","arguments":"","return_type":"TABLE","volatility":"VOLATILE","security_definer":true,"description":"Synchronise auth.users vers profiles"},
-    {"function_name":"update_profile_from_auth","arguments":"user_id uuid","return_type":"void","volatility":"VOLATILE","security_definer":true,"description":"Met a jour un profil depuis auth.users"},
-    {"function_name":"validate_coupons","arguments":"p_customer_id uuid, p_coupon_ids bigint[]","return_type":"jsonb","volatility":"VOLATILE","security_definer":false,"description":"Valide une liste de coupons"},
-    {"function_name":"validate_payment_methods","arguments":"p_payment_methods jsonb","return_type":"jsonb","volatility":"VOLATILE","security_definer":false,"description":"Valide les methodes de paiement"}
+    {
+      "function_name": "award_user_badge",
+      "arguments": "p_customer_id uuid, p_badge_slug character varying, p_period_type character varying, p_period_identifier character varying, p_rank bigint",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Attribue un badge à un utilisateur pour une période donnée"
+    },
+    {
+      "function_name": "calculate_gains",
+      "arguments": "p_amount_for_gains integer",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": null
+    },
+    {
+      "function_name": "calculate_quest_progress",
+      "arguments": "p_customer_id uuid, p_quest_id bigint, p_period_identifier character varying DEFAULT NULL::character varying",
+      "return_type": "integer",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Calcule la progression actuelle d'un utilisateur pour une quete donnee"
+    },
+    {
+      "function_name": "check_cashback_balance",
+      "arguments": "p_customer_id uuid, p_cashback_requested integer",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": null
+    },
+    {
+      "function_name": "check_email_exists",
+      "arguments": "email_to_check text",
+      "return_type": "boolean",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": null
+    },
+    {
+      "function_name": "check_period_closed",
+      "arguments": "p_period_type character varying, p_period_identifier character varying",
+      "return_type": "boolean",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": "Vérifie si une période de leaderboard a déjà été fermée"
+    },
+    {
+      "function_name": "create_frequency_coupon",
+      "arguments": "p_customer_id uuid",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Crée automatiquement un coupon de 5% de réduction pour un utilisateur qui a passé au moins 10 commandes durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé."
+    },
+    {
+      "function_name": "create_leaderboard_reward_coupon",
+      "arguments": "p_customer_id uuid, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Crée un coupon de récompense leaderboard (montant OU pourcentage)"
+    },
+    {
+      "function_name": "create_manual_coupon",
+      "arguments": "p_customer_id uuid, p_template_id bigint DEFAULT NULL::bigint, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer, p_expires_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_validity_days integer DEFAULT NULL::integer, p_notes text DEFAULT NULL::text, p_admin_id uuid DEFAULT NULL::uuid",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": null
+    },
+    {
+      "function_name": "create_receipt",
+      "arguments": "p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[] DEFAULT ARRAY[]::bigint[]",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Crée un reçu avec paiements, coupons et gains. Applique les coefficients XP et cashback du profil client (100 = 1x, 150 = 1.5x, 50 = 0.5x)."
+    },
+    {
+      "function_name": "create_spending_from_cashback_payment",
+      "arguments": "",
+      "return_type": "trigger",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": "Fonction déclenchée automatiquement lors de l'insertion d'une receipt_line. \nSi payment_method = 'cashback', crée automatiquement une entrée dans spendings."
+    },
+    {
+      "function_name": "create_weekly_coupon",
+      "arguments": "p_customer_id uuid",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Crée automatiquement un coupon de 3,90€ pour un utilisateur qui a dépensé plus de 50€ durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé."
+    },
+    {
+      "function_name": "distribute_all_quest_rewards",
+      "arguments": "p_admin_id uuid DEFAULT NULL::uuid",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Distribue les recompenses pour toutes les quetes completees en attente"
+    },
+    {
+      "function_name": "distribute_leaderboard_rewards",
+      "arguments": "p_period_type character varying, p_force boolean DEFAULT false",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Distribue automatiquement les récompenses aux TOP 10 du leaderboard"
+    },
+    {
+      "function_name": "distribute_period_rewards_v2",
+      "arguments": "p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying, p_force boolean DEFAULT false, p_preview_only boolean DEFAULT false, p_admin_id uuid DEFAULT NULL::uuid",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Distribue les récompenses leaderboard avec support des tiers configurables et mode preview"
+    },
+    {
+      "function_name": "distribute_quest_reward",
+      "arguments": "p_quest_progress_id bigint, p_admin_id uuid DEFAULT NULL::uuid",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Distribue les recompenses pour une quete completee"
+    },
+    {
+      "function_name": "get_coupon_stats",
+      "arguments": "",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Retourne les statistiques globales des coupons pour le dashboard admin"
+    },
+    {
+      "function_name": "get_current_user_role",
+      "arguments": "",
+      "return_type": "text",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": null
+    },
+    {
+      "function_name": "get_customer_available_coupons",
+      "arguments": "p_customer_id uuid",
+      "return_type": "TABLE(id bigint, created_at timestamp with time zone, customer_id uuid, used boolean, amount integer, percentage integer)",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Récupère les coupons disponibles (non utilisés) d'un client. \nAccessible uniquement aux employees, establishments et admins.\nUtilisée lors du scan QR code client pour le paiement."
+    },
+    {
+      "function_name": "get_period_bounds",
+      "arguments": "p_period_type character varying, p_period_identifier character varying",
+      "return_type": "TABLE(period_start timestamp with time zone, period_end timestamp with time zone)",
+      "volatility": "IMMUTABLE",
+      "security_definer": false,
+      "description": null
+    },
+    {
+      "function_name": "get_period_identifier",
+      "arguments": "p_period_type character varying, p_date timestamp with time zone DEFAULT now()",
+      "return_type": "character varying",
+      "volatility": "IMMUTABLE",
+      "security_definer": false,
+      "description": "Calcule l'identifiant de période (2026-W04, 2026-01, 2026) pour un type et une date donnés"
+    },
+    {
+      "function_name": "get_period_preview",
+      "arguments": "p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Prévisualise la distribution des récompenses sans les créer"
+    },
+    {
+      "function_name": "get_user_badges",
+      "arguments": "p_customer_id uuid",
+      "return_type": "TABLE(badge_id integer, slug character varying, name character varying, description text, icon character varying, rarity character varying, category character varying, earned_at timestamp with time zone, period_type character varying, period_identifier character varying, rank integer)",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": "Récupère tous les badges d'un utilisateur avec leurs détails complets"
+    },
+    {
+      "function_name": "get_user_cashback_balance",
+      "arguments": "p_customer_id uuid",
+      "return_type": "jsonb",
+      "volatility": "STABLE",
+      "security_definer": false,
+      "description": "Retourne le solde cashback d'un utilisateur depuis la vue matérialisée.\nUtilisation: SELECT get_user_cashback_balance('11111111-1111-1111-1111-111111111111'::UUID);"
+    },
+    {
+      "function_name": "get_user_complete_stats",
+      "arguments": "p_customer_id uuid",
+      "return_type": "jsonb",
+      "volatility": "STABLE",
+      "security_definer": false,
+      "description": "Retourne toutes les statistiques d'un utilisateur depuis la vue matérialisée complète.\nUtilisation: SELECT get_user_complete_stats('11111111-1111-1111-1111-111111111111'::UUID);"
+    },
+    {
+      "function_name": "get_user_info",
+      "arguments": "user_ids uuid[]",
+      "return_type": "TABLE(id uuid, email text, first_name text, last_name text, username text, avatar_url text)",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": null
+    },
+    {
+      "function_name": "get_user_quests",
+      "arguments": "p_customer_id uuid, p_period_type character varying DEFAULT NULL::character varying",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Recupere toutes les quetes actives avec la progression de l'utilisateur pour la periode courante"
+    },
+    {
+      "function_name": "get_user_xp_stats",
+      "arguments": "p_customer_id uuid",
+      "return_type": "jsonb",
+      "volatility": "STABLE",
+      "security_definer": false,
+      "description": "Retourne les XP et statistiques d'un utilisateur depuis la vue matérialisée.\nUtilisation: SELECT get_user_xp_stats('11111111-1111-1111-1111-111111111111'::UUID);"
+    },
+    {
+      "function_name": "handle_new_user",
+      "arguments": "",
+      "return_type": "trigger",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Fonction trigger qui crée automatiquement un profil dans public.profiles lors de la création d'un utilisateur dans auth.users"
+    },
+    {
+      "function_name": "handle_user_delete",
+      "arguments": "",
+      "return_type": "trigger",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Supprime automatiquement le profil dans public.profiles quand un utilisateur est supprimé de auth.users"
+    },
+    {
+      "function_name": "sync_auth_to_profiles",
+      "arguments": "",
+      "return_type": "TABLE(synced_count integer, user_ids text[])",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Synchronise tous les utilisateurs de auth.users vers public.profiles. Retourne le nombre d'utilisateurs synchronisés et leurs IDs."
+    },
+    {
+      "function_name": "trigger_update_quest_progress",
+      "arguments": "",
+      "return_type": "trigger",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": null
+    },
+    {
+      "function_name": "update_profile_from_auth",
+      "arguments": "user_id uuid",
+      "return_type": "void",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Met à jour un profil existant avec les données de auth.users"
+    },
+    {
+      "function_name": "update_quest_progress_for_receipt",
+      "arguments": "p_receipt_id bigint",
+      "return_type": "json",
+      "volatility": "VOLATILE",
+      "security_definer": true,
+      "description": "Met a jour la progression de toutes les quetes apres un nouveau receipt"
+    },
+    {
+      "function_name": "validate_coupons",
+      "arguments": "p_customer_id uuid, p_coupon_ids bigint[]",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": null
+    },
+    {
+      "function_name": "validate_payment_methods",
+      "arguments": "p_payment_methods jsonb",
+      "return_type": "jsonb",
+      "volatility": "VOLATILE",
+      "security_definer": false,
+      "description": null
+    }
   ],
   "triggers": [
-    {"trigger_name":"trigger_create_spending_on_cashback","table_name":"receipt_lines","function_name":"create_spending_from_cashback_payment","trigger_definition":"CREATE TRIGGER trigger_create_spending_on_cashback AFTER INSERT ON public.receipt_lines FOR EACH ROW EXECUTE FUNCTION create_spending_from_cashback_payment()"}
+    {
+      "trigger_name": "trigger_create_spending_on_cashback",
+      "table_name": "receipt_lines",
+      "trigger_definition": "CREATE TRIGGER trigger_create_spending_on_cashback AFTER INSERT ON public.receipt_lines FOR EACH ROW EXECUTE FUNCTION create_spending_from_cashback_payment()",
+      "function_name": "create_spending_from_cashback_payment"
+    },
+    {
+      "trigger_name": "trigger_quest_progress_on_receipt",
+      "table_name": "receipts",
+      "trigger_definition": "CREATE TRIGGER trigger_quest_progress_on_receipt AFTER INSERT ON public.receipts FOR EACH ROW EXECUTE FUNCTION trigger_update_quest_progress()",
+      "function_name": "trigger_update_quest_progress"
+    }
   ],
   "materializedViews": [
-    {"view_name":"user_stats","description":"Statistiques XP et cashback par utilisateur"},
-    {"view_name":"weekly_xp_leaderboard","description":"Classement hebdomadaire (lundi-dimanche)"},
-    {"view_name":"monthly_xp_leaderboard","description":"Classement mensuel (1er au dernier jour)"},
-    {"view_name":"yearly_xp_leaderboard","description":"Classement annuel (1er janvier au 31 decembre)"}
+    {
+      "view_name": "monthly_xp_leaderboard",
+      "view_definition": " SELECT r.customer_id,\n    COALESCE(sum(g.xp), 0::bigint) AS monthly_xp,\n    count(DISTINCT r.id) AS monthly_receipt_count,\n    count(DISTINCT r.establishment_id) AS monthly_establishment_count,\n    COALESCE(sum(r.amount), 0::bigint) AS monthly_total_spent,\n    min(r.created_at) AS first_receipt_at,\n    row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank\n   FROM receipts r\n     LEFT JOIN gains g ON g.receipt_id = r.id\n  WHERE r.created_at >= date_trunc('month'::text, now()) AND r.created_at < (date_trunc('month'::text, now()) + '1 mon'::interval)\n  GROUP BY r.customer_id\n HAVING COALESCE(sum(g.xp), 0::bigint) > 0\n  ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));",
+      "description": "Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour récupérer username, nom, etc."
+    },
+    {
+      "view_name": "user_stats",
+      "view_definition": " SELECT p.id AS customer_id,\n    COALESCE(sum(g.xp), 0::bigint) AS total_xp,\n    COALESCE(sum(g.cashback_money), 0::bigint) AS cashback_earned,\n    COALESCE(( SELECT sum(rl.amount) AS sum\n           FROM receipt_lines rl\n             JOIN receipts r_sub ON r_sub.id = rl.receipt_id\n          WHERE r_sub.customer_id = p.id AND rl.payment_method = 'cashback'::payment_method), 0::bigint) AS cashback_spent,\n    COALESCE(sum(g.cashback_money), 0::bigint) - COALESCE(( SELECT sum(rl.amount) AS sum\n           FROM receipt_lines rl\n             JOIN receipts r_sub ON r_sub.id = rl.receipt_id\n          WHERE r_sub.customer_id = p.id AND rl.payment_method = 'cashback'::payment_method), 0::bigint) AS cashback_available\n   FROM profiles p\n     LEFT JOIN receipts r ON r.customer_id = p.id\n     LEFT JOIN gains g ON g.receipt_id = r.id\n  GROUP BY p.id;",
+      "description": "Vue matérialisée combinant les statistiques XP et cashback par utilisateur"
+    },
+    {
+      "view_name": "weekly_xp_leaderboard",
+      "view_definition": " SELECT r.customer_id,\n    COALESCE(sum(g.xp), 0::bigint) AS weekly_xp,\n    count(DISTINCT r.id) AS weekly_receipt_count,\n    count(DISTINCT r.establishment_id) AS weekly_establishment_count,\n    COALESCE(sum(r.amount), 0::bigint) AS weekly_total_spent,\n    min(r.created_at) AS first_receipt_at,\n    row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank\n   FROM receipts r\n     LEFT JOIN gains g ON g.receipt_id = r.id\n  WHERE r.created_at >= date_trunc('week'::text, now()) AND r.created_at < (date_trunc('week'::text, now()) + '7 days'::interval)\n  GROUP BY r.customer_id\n HAVING COALESCE(sum(g.xp), 0::bigint) > 0\n  ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));",
+      "description": "Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupérer username, nom, etc."
+    },
+    {
+      "view_name": "yearly_xp_leaderboard",
+      "view_definition": " SELECT r.customer_id,\n    COALESCE(sum(g.xp), 0::bigint) AS yearly_xp,\n    count(DISTINCT r.id) AS yearly_receipt_count,\n    count(DISTINCT r.establishment_id) AS yearly_establishment_count,\n    COALESCE(sum(r.amount), 0::bigint) AS yearly_total_spent,\n    min(r.created_at) AS first_receipt_at,\n    row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank\n   FROM receipts r\n     LEFT JOIN gains g ON g.receipt_id = r.id\n  WHERE r.created_at >= date_trunc('year'::text, now()) AND r.created_at < (date_trunc('year'::text, now()) + '1 year'::interval)\n  GROUP BY r.customer_id\n HAVING COALESCE(sum(g.xp), 0::bigint) > 0\n  ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));",
+      "description": "Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour récupérer username, nom, etc."
+    }
   ],
   "views": [
-    {"view_name":"reward_distribution_stats","description":"Statistiques des distributions de recompenses"}
+    {
+      "view_name": "reward_distribution_stats",
+      "view_definition": " SELECT pc.period_type,\n    pc.period_identifier,\n    pc.rewards_distributed_count,\n    pc.status,\n    pc.distribution_duration_ms,\n    pc.closed_at,\n    count(DISTINCT lrd.customer_id) AS unique_winners,\n    count(c.id) AS total_coupons_created,\n    sum(\n        CASE\n            WHEN c.amount IS NOT NULL THEN c.amount\n            ELSE 0\n        END) AS total_euros_distributed,\n    count(ub.id) AS total_badges_awarded\n   FROM period_closures pc\n     LEFT JOIN leaderboard_reward_distributions lrd ON pc.period_type::text = lrd.period_type::text AND pc.period_identifier::text = lrd.period_identifier::text\n     LEFT JOIN coupons c ON c.id = lrd.coupon_amount_id OR c.id = lrd.coupon_percentage_id\n     LEFT JOIN user_badges ub ON ub.period_type::text = pc.period_type::text AND ub.period_identifier::text = pc.period_identifier::text\n  GROUP BY pc.id, pc.period_type, pc.period_identifier, pc.rewards_distributed_count, pc.status, pc.distribution_duration_ms, pc.closed_at\n  ORDER BY pc.closed_at DESC;",
+      "description": null
+    }
   ],
   "enums": [
-    {"type_name":"user_role","enum_values":["client","employee","establishment","admin"]},
-    {"type_name":"payment_method","enum_values":["card","cash","cashback","coupon"]}
+    {
+      "type_name": "payment_method",
+      "enum_values": "{card,cash,cashback,coupon}"
+    },
+    {
+      "type_name": "user_role",
+      "enum_values": "{client,employee,establishment,admin}"
+    }
   ],
   "cronJobs": [
-    {"jobid":1,"schedule":"5 0 * * 1","command":"SELECT distribute_period_rewards_v2('weekly')","active":true},
-    {"jobid":2,"schedule":"10 0 1 * *","command":"SELECT distribute_period_rewards_v2('monthly')","active":true},
-    {"jobid":3,"schedule":"15 0 1 1 *","command":"SELECT distribute_period_rewards_v2('yearly')","active":true}
+    {
+      "jobid": 1,
+      "schedule": "5 0 * * 1",
+      "command": "SELECT distribute_period_rewards_v2('weekly')",
+      "database": "postgres",
+      "username": "postgres",
+      "active": true
+    },
+    {
+      "jobid": 2,
+      "schedule": "10 0 1 * *",
+      "command": "SELECT distribute_period_rewards_v2('monthly')",
+      "database": "postgres",
+      "username": "postgres",
+      "active": true
+    },
+    {
+      "jobid": 3,
+      "schedule": "15 0 1 1 *",
+      "command": "SELECT distribute_period_rewards_v2('yearly')",
+      "database": "postgres",
+      "username": "postgres",
+      "active": true
+    }
   ],
   "edgeFunctions": [
-    {"verify_jwt":true,"id":"c138bc5c-d111-4b7a-9e33-e74f654535d4","slug":"send-contact-email","version":1,"name":"send-contact-email","status":"ACTIVE","entrypoint_path":"supabase/functions/send-contact-email/index.ts","created_at":1767023004895}
+    {
+      "verify_jwt": true,
+      "id": "c138bc5c-d111-4b7a-9e33-e74f654535d4",
+      "slug": "send-contact-email",
+      "version": 1,
+      "name": "send-contact-email",
+      "status": "ACTIVE",
+      "entrypoint_path": "file:///tmp/user_fn_uflgfsoekkgegdgecubb_c138bc5c-d111-4b7a-9e33-e74f654535d4_1/source/supabase/functions/send-contact-email/index.ts",
+      "import_map_path": "file:///tmp/user_fn_uflgfsoekkgegdgecubb_c138bc5c-d111-4b7a-9e33-e74f654535d4_1/source/supabase/functions/send-contact-email/deno.json",
+      "import_map": true,
+      "created_at": 1767023004895,
+      "updated_at": 1767023004895,
+      "ezbr_sha256": "af28761252beb8847de4c568b05576201dadd3bf1f96a96d8fa672ef0f9dd2e2"
+    }
   ],
   "extensions": [
-    {"name":"plpgsql","schema":"pg_catalog","installed_version":"1.0","comment":"PL/pgSQL procedural language"},
-    {"name":"uuid-ossp","schema":"extensions","installed_version":"1.1","comment":"Generation UUIDs"},
-    {"name":"pgcrypto","schema":"extensions","installed_version":"1.3","comment":"Fonctions cryptographiques"},
-    {"name":"pg_graphql","schema":"graphql","installed_version":"1.5.11","comment":"Support GraphQL"},
-    {"name":"pg_stat_statements","schema":"extensions","installed_version":"1.11","comment":"Statistiques SQL"},
-    {"name":"supabase_vault","schema":"vault","installed_version":"0.3.1","comment":"Vault Supabase"},
-    {"name":"pg_cron","schema":"pg_catalog","installed_version":"1.6.4","comment":"Jobs cron PostgreSQL"}
+    {
+      "name": "pg_cron",
+      "schema": "pg_catalog",
+      "installed_version": "1.6.4",
+      "comment": "Job scheduler for PostgreSQL"
+    },
+    {
+      "name": "pg_graphql",
+      "schema": "graphql",
+      "installed_version": "1.5.11",
+      "comment": "pg_graphql: GraphQL support"
+    },
+    {
+      "name": "pg_stat_statements",
+      "schema": "extensions",
+      "installed_version": "1.11",
+      "comment": "track planning and execution statistics of all SQL statements executed"
+    },
+    {
+      "name": "pgcrypto",
+      "schema": "extensions",
+      "installed_version": "1.3",
+      "comment": "cryptographic functions"
+    },
+    {
+      "name": "plpgsql",
+      "schema": "pg_catalog",
+      "installed_version": "1.0",
+      "comment": "PL/pgSQL procedural language"
+    },
+    {
+      "name": "supabase_vault",
+      "schema": "vault",
+      "installed_version": "0.3.1",
+      "comment": "Supabase Vault Extension"
+    },
+    {
+      "name": "uuid-ossp",
+      "schema": "extensions",
+      "installed_version": "1.1",
+      "comment": "generate universally unique identifiers (UUIDs)"
+    }
   ]
 }

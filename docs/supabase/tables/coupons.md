@@ -1,6 +1,6 @@
 # Table: coupons
 
-Coupons de reduction utilisateurs
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Coupons de reduction utilisateurs
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 2 |
+| **Lignes** | 4 |
 
 ## Colonnes
 
@@ -20,10 +20,10 @@ Coupons de reduction utilisateurs
 | `used` | `boolean` | Non | false | - |
 | `amount` | `integer` | Oui | - | - |
 | `percentage` | `integer` | Oui | - | - |
-| `template_id` | `bigint` | Oui | - | Reference au template |
-| `expires_at` | `timestamp with time zone` | Oui | - | Date d'expiration |
-| `distribution_type` | `varchar` | Oui | - | Type de distribution |
-| `period_identifier` | `varchar` | Oui | - | Identifiant de periode |
+| `template_id` | `bigint` | Oui | - | Référence au template utilisé pour créer ce coupon |
+| `expires_at` | `timestamp with time zone` | Oui | - | Date d'expiration du coupon. NULL = pas d'expiration |
+| `distribution_type` | `character varying(50)` | Oui | - | Type de distribution: leaderboard_weekly, leaderboard_monthly, manual, trigger_legacy |
+| `period_identifier` | `character varying(20)` | Oui | - | Identifiant de période pour traçabilité (ex: 2026-W04) |
 
 ## Cles primaires
 
@@ -31,4 +31,5 @@ Coupons de reduction utilisateurs
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `coupons_customer_id_fkey`: customer_id → profiles.id
+- `coupons_template_id_fkey`: template_id → coupon_templates.id

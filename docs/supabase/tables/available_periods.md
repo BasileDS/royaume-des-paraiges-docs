@@ -1,4 +1,4 @@
-# Table: likes
+# Table: available_periods
 
 Pas de description disponible.
 
@@ -8,18 +8,18 @@ Pas de description disponible.
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 0 |
+| **Lignes** | 130 |
 
 ## Colonnes
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
 | `id` | `bigint` | Non | - | - |
-| `created_at` | `timestamp with time zone` | Non | now() | - |
-| `beer_id` | `integer` | Oui | - | - |
-| `news_id` | `integer` | Oui | - | - |
-| `quest_id` | `integer` | Oui | - | - |
-| `user_id` | `uuid` | Non | - | - |
+| `period_type` | `character varying(20)` | Non | - | - |
+| `period_identifier` | `character varying(20)` | Non | - | - |
+| `start_date` | `date` | Non | - | - |
+| `end_date` | `date` | Non | - | - |
+| `created_at` | `timestamp with time zone` | Oui | now() | - |
 
 ## Cles primaires
 
@@ -27,4 +27,4 @@ Pas de description disponible.
 
 ## Relations (Foreign Keys)
 
-- `likes_user_id_fkey`: user_id → profiles.id
+Aucune relation definie.

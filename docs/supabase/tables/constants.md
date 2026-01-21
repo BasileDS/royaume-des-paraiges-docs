@@ -1,6 +1,6 @@
 # Table: constants
 
-Constantes de configuration
+Pas de description disponible.
 
 ## Informations
 
@@ -8,13 +8,13 @@ Constantes de configuration
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 2 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `key` | `varchar` | Non | - | - |
+| `key` | `character varying` | Non | - | - |
 | `value` | `text` | Non | - | - |
 
 ## Cles primaires

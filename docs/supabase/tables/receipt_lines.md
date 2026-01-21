@@ -1,6 +1,6 @@
 # Table: receipt_lines
 
-Lignes de paiement des tickets
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Lignes de paiement des tickets
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 55 |
+| **Lignes** | 42 |
 
 ## Colonnes
 
@@ -26,4 +26,4 @@ Lignes de paiement des tickets
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `receipt_lines_receipt_id_fkey`: receipt_id → receipts.id

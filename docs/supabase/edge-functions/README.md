@@ -15,6 +15,6 @@
 - **Version**: 1
 - **JWT Required**: Oui
 - **Status**: ACTIVE
-- **Entrypoint**: `supabase/functions/send-contact-email/index.ts`
+- **Entrypoint**: `file:///tmp/user_fn_uflgfsoekkgegdgecubb_c138bc5c-d111-4b7a-9e33-e74f654535d4_1/source/supabase/functions/send-contact-email/index.ts`
 - **Cree le**: 2025-12-29T15:43:24.895Z
 

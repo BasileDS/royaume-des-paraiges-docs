@@ -1,6 +1,6 @@
 # Table: badge_types
 
-Definitions des badges
+Définitions des badges disponibles dans le système
 
 ## Informations
 
@@ -8,19 +8,19 @@ Definitions des badges
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 9 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | `integer` | Non | - | - |
-| `slug` | `varchar` | Non | - | Identifiant unique du badge |
-| `name` | `varchar` | Non | - | - |
+| `id` | `integer` | Non | nextval('badge_types_id_seq'::regclass) | - |
+| `slug` | `character varying(100)` | Non | - | Identifiant unique du badge (ex: weekly_champion) |
+| `name` | `character varying(200)` | Non | - | - |
 | `description` | `text` | Oui | - | - |
-| `icon` | `varchar` | Oui | - | - |
-| `rarity` | `varchar` | Oui | - | common, rare, epic, legendary |
-| `category` | `varchar` | Oui | - | - |
+| `icon` | `character varying(50)` | Oui | - | - |
+| `rarity` | `character varying(20)` | Oui | - | Rareté du badge (common, rare, epic, legendary) |
+| `category` | `character varying(50)` | Oui | - | - |
 | `created_at` | `timestamp with time zone` | Oui | now() | - |
 
 ## Cles primaires

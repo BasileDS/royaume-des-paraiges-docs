@@ -1,6 +1,6 @@
 # Table: gains
 
-XP et cashback gagnes
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ XP et cashback gagnes
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 55 |
+| **Lignes** | 42 |
 
 ## Colonnes
 
@@ -27,4 +27,4 @@ XP et cashback gagnes
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `gains_receipt_id_fkey`: receipt_id → receipts.id

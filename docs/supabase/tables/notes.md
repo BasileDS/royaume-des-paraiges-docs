@@ -1,6 +1,6 @@
 # Table: notes
 
-Notes/evaluations
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Notes/evaluations
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 0 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
@@ -25,4 +25,4 @@ Notes/evaluations
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `notes_customer_id_fkey`: customer_id → profiles.id

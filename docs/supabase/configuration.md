@@ -19,24 +19,29 @@ supabase/docs/
 ├── SUPABASE-CONFIG.md           # Ce fichier
 ├── tables/                      # Structure des tables
 │   ├── README.md               # Vue d'ensemble des tables
-│   ├── profiles.md
-│   ├── receipts.md
-│   ├── receipt_lines.md
-│   ├── gains.md
-│   ├── spendings.md
-│   ├── coupons.md
-│   ├── coupon_templates.md
-│   ├── reward_tiers.md
-│   ├── period_reward_configs.md
-│   ├── coupon_distribution_logs.md
-│   ├── likes.md
-│   ├── comments.md
-│   ├── notes.md
+│   ├── available_periods.md
 │   ├── badge_types.md
-│   ├── user_badges.md
-│   ├── leaderboard_reward_distributions.md
-│   ├── period_closures.md
+│   ├── comments.md
 │   ├── constants.md
+│   ├── coupon_distribution_logs.md
+│   ├── coupon_templates.md
+│   ├── coupons.md
+│   ├── gains.md
+│   ├── leaderboard_reward_distributions.md
+│   ├── likes.md
+│   ├── notes.md
+│   ├── period_closures.md
+│   ├── period_reward_configs.md
+│   ├── profiles.md
+│   ├── quest_completion_logs.md
+│   ├── quest_periods.md
+│   ├── quest_progress.md
+│   ├── quests.md
+│   ├── receipt_lines.md
+│   ├── receipts.md
+│   ├── reward_tiers.md
+│   ├── spendings.md
+│   ├── user_badges.md
 ├── functions/                   # Fonctions PostgreSQL
 │   ├── README.md               # Index des fonctions
 │   └── ...
@@ -54,57 +59,63 @@ supabase/docs/
 
 ## Resume de la Base de Donnees
 
-### Tables (18)
+### Tables (23)
 
 | Table | Lignes | RLS | Description |
 |-------|--------|-----|-------------|
-| `profiles` | 17 | Oui | Profils utilisateurs lies a auth.users |
-| `receipts` | 55 | Oui | Tickets de caisse |
-| `receipt_lines` | 55 | Oui | Lignes de paiement des tickets |
-| `gains` | 55 | Oui | XP et cashback gagnes |
-| `spendings` | 5 | Oui | Depenses cashback |
-| `coupons` | 2 | Oui | Coupons de reduction utilisateurs |
-| `coupon_templates` | 23 | Oui | Modeles de coupons reutilisables |
-| `reward_tiers` | 6 | Oui | Paliers de recompenses leaderboard |
-| `period_reward_configs` | 0 | Oui | Config personnalisee par periode |
-| `coupon_distribution_logs` | 2 | Oui | Historique des distributions |
-| `likes` | 8 | Oui | Likes sur contenus |
-| `comments` | 2 | Oui | Commentaires |
-| `notes` | 0 | Oui | Notes/evaluations |
-| `badge_types` | 9 | Oui | Definitions des badges |
-| `user_badges` | 2 | Oui | Badges obtenus par utilisateur |
-| `leaderboard_reward_distributions` | 0 | Oui | Historique recompenses leaderboard |
-| `period_closures` | 1 | Oui | Clotures de periodes |
-| `constants` | 2 | Oui | Constantes de configuration |
+| `available_periods` | 130 | Oui | - |
+| `badge_types` | -1 | Oui | Définitions des badges disponibles dans le système |
+| `comments` | -1 | Oui | - |
+| `constants` | -1 | Oui | - |
+| `coupon_distribution_logs` | -1 | Oui | Historique complet de toutes les distributions de coupons |
+| `coupon_templates` | -1 | Oui | Modèles de coupons réutilisables pour les récompenses |
+| `coupons` | 4 | Oui | - |
+| `gains` | 42 | Oui | - |
+| `leaderboard_reward_distributions` | -1 | Oui | Historique des récompenses distribuées aux gagnants du leaderboard |
+| `likes` | 0 | Oui | - |
+| `notes` | -1 | Oui | - |
+| `period_closures` | -1 | Oui | Tracking des périodes de leaderboard fermées et récompenses distribuées |
+| `period_reward_configs` | -1 | Oui | Configuration personnalisée des récompenses pour une période spécifique |
+| `profiles` | 18 | Oui | - |
+| `quest_completion_logs` | -1 | Oui | Historique detaille de toutes les completions de quetes avec recompenses |
+| `quest_periods` | 0 | Oui | Table de liaison pour assigner des quêtes à des périodes spécifiques (ex: 2026-W05, 2026-01, 2026) |
+| `quest_progress` | -1 | Oui | Suivi de la progression des utilisateurs sur les quetes |
+| `quests` | -1 | Oui | Definition des quetes periodiques disponibles |
+| `receipt_lines` | 42 | Oui | - |
+| `receipts` | 42 | Oui | - |
+| `reward_tiers` | -1 | Oui | Paliers de récompenses pour le leaderboard (configurable par rang) |
+| `spendings` | -1 | Oui | - |
+| `user_badges` | -1 | Oui | Collection des badges obtenus par chaque utilisateur |
 
 ### Types Personnalises (Enums)
 
 | Enum | Valeurs |
 |------|---------|
-| `user_role` | `client`, `employee`, `establishment`, `admin` |
-| `payment_method` | `card`, `cash`, `cashback`, `coupon` |
+| `payment_method` | {card,cash,cashback,coupon} |
+| `user_role` | {client,employee,establishment,admin} |
 
-### Fonctions (29)
+### Fonctions (36)
 
 Fonctions principales :
-- `award_user_badge` - Attribue un badge a un utilisateur pour une periode donnee
-- `calculate_gains` - Calcule les gains XP et cashback
-- `check_cashback_balance` - Verifie le solde cashback d'un utilisateur
-- `check_email_exists` - Verifie si un email existe
-- `check_period_closed` - Verifie si une periode de leaderboard a deja ete fermee
-- `create_frequency_coupon` - Cree un coupon de frequence (5% si 10+ commandes/semaine)
-- `create_leaderboard_reward_coupon` - Cree un coupon de recompense leaderboard
-- `create_manual_coupon` - Cree un coupon manuellement
-- `create_receipt` - Cree un recu avec paiements, coupons et gains
-- `create_spending_from_cashback_payment` - Trigger: cree un spending lors d'un paiement cashback
+- `award_user_badge` - Attribue un badge à un utilisateur pour une période donnée
+- `calculate_gains` - Pas de description
+- `calculate_quest_progress` - Calcule la progression actuelle d'un utilisateur pour une quete donnee
+- `check_cashback_balance` - Pas de description
+- `check_email_exists` - Pas de description
+- `check_period_closed` - Vérifie si une période de leaderboard a déjà été fermée
+- `create_frequency_coupon` - Crée automatiquement un coupon de 5% de réduction pour un utilisateur qui a passé au moins 10 commandes durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé.
+- `create_leaderboard_reward_coupon` - Crée un coupon de récompense leaderboard (montant OU pourcentage)
+- `create_manual_coupon` - Pas de description
+- `create_receipt` - Crée un reçu avec paiements, coupons et gains. Applique les coefficients XP et cashback du profil client (100 = 1x, 150 = 1.5x, 50 = 0.5x).
 
-... et 19 autres fonctions
+... et 26 autres fonctions
 
-### Triggers (1)
+### Triggers (2)
 
 | Trigger | Table | Description |
 |---------|-------|-------------|
 | `trigger_create_spending_on_cashback` | `receipt_lines` | Appelle `create_spending_from_cashback_payment` |
+| `trigger_quest_progress_on_receipt` | `receipts` | Appelle `trigger_update_quest_progress` |
 
 ### Jobs pg_cron (3)
 
@@ -116,14 +127,14 @@ Fonctions principales :
 
 ### Vues Materialisees (4)
 
-- `user_stats` - Statistiques XP et cashback par utilisateur
-- `weekly_xp_leaderboard` - Classement hebdomadaire (lundi-dimanche)
-- `monthly_xp_leaderboard` - Classement mensuel (1er au dernier jour)
-- `yearly_xp_leaderboard` - Classement annuel (1er janvier au 31 decembre)
+- `monthly_xp_leaderboard` - Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour récupérer username, nom, etc.
+- `user_stats` - Vue matérialisée combinant les statistiques XP et cashback par utilisateur
+- `weekly_xp_leaderboard` - Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupérer username, nom, etc.
+- `yearly_xp_leaderboard` - Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour récupérer username, nom, etc.
 
 ### Vues (1)
 
-- `reward_distribution_stats` - Statistiques des distributions de recompenses
+- `reward_distribution_stats` - Pas de description
 
 ### Storage Buckets (1)
 
@@ -137,13 +148,13 @@ Fonctions principales :
 
 | Extension | Schema | Version | Description |
 |-----------|--------|---------|-------------|
+| `pg_cron` | pg_catalog | 1.6.4 | Job scheduler for PostgreSQL |
+| `pg_graphql` | graphql | 1.5.11 | pg_graphql: GraphQL support |
+| `pg_stat_statements` | extensions | 1.11 | track planning and execution statistics of all SQL statements executed |
+| `pgcrypto` | extensions | 1.3 | cryptographic functions |
 | `plpgsql` | pg_catalog | 1.0 | PL/pgSQL procedural language |
-| `uuid-ossp` | extensions | 1.1 | Generation UUIDs |
-| `pgcrypto` | extensions | 1.3 | Fonctions cryptographiques |
-| `pg_graphql` | graphql | 1.5.11 | Support GraphQL |
-| `pg_stat_statements` | extensions | 1.11 | Statistiques SQL |
-| `supabase_vault` | vault | 0.3.1 | Vault Supabase |
-| `pg_cron` | pg_catalog | 1.6.4 | Jobs cron PostgreSQL |
+| `supabase_vault` | vault | 0.3.1 | Supabase Vault Extension |
+| `uuid-ossp` | extensions | 1.1 | generate universally unique identifiers (UUIDs) |
 
 ## Schema Relationnel
 

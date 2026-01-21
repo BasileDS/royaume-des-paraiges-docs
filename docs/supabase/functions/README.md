@@ -2,37 +2,44 @@
 
 Cette section documente toutes les fonctions PostgreSQL disponibles dans le schema `public`.
 
-## Liste des fonctions (29)
+## Liste des fonctions (36)
 
 | Fonction | Arguments | Retour | Volatilite | Security Definer |
 |----------|-----------|--------|------------|------------------|
-| `award_user_badge` | p_customer_id uuid, p_badge_slug varchar, p_period_type varchar, p_period_identifier varchar, p_rank bigint | `json` | VOLATILE | Oui |
+| `award_user_badge` | p_customer_id uuid, p_badge_slug character varying, p_period_type character varying, p_period_identifier character varying, p_rank bigint | `json` | VOLATILE | Oui |
 | `calculate_gains` | p_amount_for_gains integer | `jsonb` | VOLATILE | Non |
+| `calculate_quest_progress` | p_customer_id uuid, p_quest_id bigint, p_period_identifier character varying DEFAULT NULL::character varying | `integer` | VOLATILE | Oui |
 | `check_cashback_balance` | p_customer_id uuid, p_cashback_requested integer | `jsonb` | VOLATILE | Non |
 | `check_email_exists` | email_to_check text | `boolean` | VOLATILE | Oui |
-| `check_period_closed` | p_period_type varchar, p_period_identifier varchar | `boolean` | VOLATILE | Non |
+| `check_period_closed` | p_period_type character varying, p_period_identifier character varying | `boolean` | VOLATILE | Non |
 | `create_frequency_coupon` | p_customer_id uuid | `json` | VOLATILE | Oui |
-| `create_leaderboard_reward_coupon` | p_customer_id uuid, p_amount integer, p_percentage integer | `json` | VOLATILE | Oui |
-| `create_manual_coupon` | p_customer_id uuid, p_template_id bigint, p_amount integer, p_percentage integer, p_expires_at timestamptz, p_validity_days integer, p_notes text, p_admin_id uuid | `jsonb` | VOLATILE | Oui |
-| `create_receipt` | p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[] | `jsonb` | VOLATILE | Oui |
+| `create_leaderboard_reward_coupon` | p_customer_id uuid, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer | `json` | VOLATILE | Oui |
+| `create_manual_coupon` | p_customer_id uuid, p_template_id bigint DEFAULT NULL::bigint, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer, p_expires_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_validity_days integer DEFAULT NULL::integer, p_notes text DEFAULT NULL::text, p_admin_id uuid DEFAULT NULL::uuid | `jsonb` | VOLATILE | Oui |
+| `create_receipt` | p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[] DEFAULT ARRAY[]::bigint[] | `jsonb` | VOLATILE | Oui |
 | `create_spending_from_cashback_payment` | - | `trigger` | VOLATILE | Non |
 | `create_weekly_coupon` | p_customer_id uuid | `json` | VOLATILE | Oui |
-| `distribute_leaderboard_rewards` | p_period_type varchar, p_force boolean | `json` | VOLATILE | Oui |
-| `distribute_period_rewards_v2` | p_period_type varchar, p_period_identifier varchar, p_force boolean, p_preview_only boolean, p_admin_id uuid | `jsonb` | VOLATILE | Oui |
+| `distribute_all_quest_rewards` | p_admin_id uuid DEFAULT NULL::uuid | `json` | VOLATILE | Oui |
+| `distribute_leaderboard_rewards` | p_period_type character varying, p_force boolean DEFAULT false | `json` | VOLATILE | Oui |
+| `distribute_period_rewards_v2` | p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying, p_force boolean DEFAULT false, p_preview_only boolean DEFAULT false, p_admin_id uuid DEFAULT NULL::uuid | `jsonb` | VOLATILE | Oui |
+| `distribute_quest_reward` | p_quest_progress_id bigint, p_admin_id uuid DEFAULT NULL::uuid | `json` | VOLATILE | Oui |
 | `get_coupon_stats` | - | `jsonb` | VOLATILE | Oui |
 | `get_current_user_role` | - | `text` | VOLATILE | Oui |
-| `get_customer_available_coupons` | p_customer_id uuid | `TABLE` | VOLATILE | Oui |
-| `get_period_identifier` | p_period_type varchar, p_date timestamptz | `varchar` | IMMUTABLE | Non |
-| `get_period_preview` | p_period_type varchar, p_period_identifier varchar | `jsonb` | VOLATILE | Oui |
-| `get_user_badges` | p_customer_id uuid | `TABLE` | VOLATILE | Non |
+| `get_customer_available_coupons` | p_customer_id uuid | `TABLE(id bigint, created_at timestamp with time zone, customer_id uuid, used boolean, amount integer, percentage integer)` | VOLATILE | Oui |
+| `get_period_bounds` | p_period_type character varying, p_period_identifier character varying | `TABLE(period_start timestamp with time zone, period_end timestamp with time zone)` | IMMUTABLE | Non |
+| `get_period_identifier` | p_period_type character varying, p_date timestamp with time zone DEFAULT now() | `character varying` | IMMUTABLE | Non |
+| `get_period_preview` | p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying | `jsonb` | VOLATILE | Oui |
+| `get_user_badges` | p_customer_id uuid | `TABLE(badge_id integer, slug character varying, name character varying, description text, icon character varying, rarity character varying, category character varying, earned_at timestamp with time zone, period_type character varying, period_identifier character varying, rank integer)` | VOLATILE | Non |
 | `get_user_cashback_balance` | p_customer_id uuid | `jsonb` | STABLE | Non |
 | `get_user_complete_stats` | p_customer_id uuid | `jsonb` | STABLE | Non |
-| `get_user_info` | user_ids uuid[] | `TABLE` | VOLATILE | Oui |
+| `get_user_info` | user_ids uuid[] | `TABLE(id uuid, email text, first_name text, last_name text, username text, avatar_url text)` | VOLATILE | Oui |
+| `get_user_quests` | p_customer_id uuid, p_period_type character varying DEFAULT NULL::character varying | `json` | VOLATILE | Oui |
 | `get_user_xp_stats` | p_customer_id uuid | `jsonb` | STABLE | Non |
 | `handle_new_user` | - | `trigger` | VOLATILE | Oui |
 | `handle_user_delete` | - | `trigger` | VOLATILE | Oui |
-| `sync_auth_to_profiles` | - | `TABLE` | VOLATILE | Oui |
+| `sync_auth_to_profiles` | - | `TABLE(synced_count integer, user_ids text[])` | VOLATILE | Oui |
+| `trigger_update_quest_progress` | - | `trigger` | VOLATILE | Oui |
 | `update_profile_from_auth` | user_id uuid | `void` | VOLATILE | Oui |
+| `update_quest_progress_for_receipt` | p_receipt_id bigint | `json` | VOLATILE | Oui |
 | `validate_coupons` | p_customer_id uuid, p_coupon_ids bigint[] | `jsonb` | VOLATILE | Non |
 | `validate_payment_methods` | p_payment_methods jsonb | `jsonb` | VOLATILE | Non |
 
@@ -41,47 +48,31 @@ Cette section documente toutes les fonctions PostgreSQL disponibles dans le sche
 
 ### award_user_badge
 
-Attribue un badge a un utilisateur pour une periode donnee
+Attribue un badge à un utilisateur pour une période donnée
 
-- **Arguments**: `p_customer_id uuid, p_badge_slug varchar, p_period_type varchar, p_period_identifier varchar, p_rank bigint`
+- **Arguments**: `p_customer_id uuid, p_badge_slug character varying, p_period_type character varying, p_period_identifier character varying, p_rank bigint`
 - **Retour**: `json`
 
 
-### calculate_gains
+### calculate_quest_progress
 
-Calcule les gains XP et cashback
+Calcule la progression actuelle d'un utilisateur pour une quete donnee
 
-- **Arguments**: `p_amount_for_gains integer`
-- **Retour**: `jsonb`
-
-
-### check_cashback_balance
-
-Verifie le solde cashback d'un utilisateur
-
-- **Arguments**: `p_customer_id uuid, p_cashback_requested integer`
-- **Retour**: `jsonb`
-
-
-### check_email_exists
-
-Verifie si un email existe
-
-- **Arguments**: `email_to_check text`
-- **Retour**: `boolean`
+- **Arguments**: `p_customer_id uuid, p_quest_id bigint, p_period_identifier character varying DEFAULT NULL::character varying`
+- **Retour**: `integer`
 
 
 ### check_period_closed
 
-Verifie si une periode de leaderboard a deja ete fermee
+Vérifie si une période de leaderboard a déjà été fermée
 
-- **Arguments**: `p_period_type varchar, p_period_identifier varchar`
+- **Arguments**: `p_period_type character varying, p_period_identifier character varying`
 - **Retour**: `boolean`
 
 
 ### create_frequency_coupon
 
-Cree un coupon de frequence (5% si 10+ commandes/semaine)
+Crée automatiquement un coupon de 5% de réduction pour un utilisateur qui a passé au moins 10 commandes durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé.
 
 - **Arguments**: `p_customer_id uuid`
 - **Retour**: `json`
@@ -89,31 +80,24 @@ Cree un coupon de frequence (5% si 10+ commandes/semaine)
 
 ### create_leaderboard_reward_coupon
 
-Cree un coupon de recompense leaderboard
+Crée un coupon de récompense leaderboard (montant OU pourcentage)
 
-- **Arguments**: `p_customer_id uuid, p_amount integer, p_percentage integer`
+- **Arguments**: `p_customer_id uuid, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer`
 - **Retour**: `json`
-
-
-### create_manual_coupon
-
-Cree un coupon manuellement
-
-- **Arguments**: `p_customer_id uuid, p_template_id bigint, p_amount integer, p_percentage integer, p_expires_at timestamptz, p_validity_days integer, p_notes text, p_admin_id uuid`
-- **Retour**: `jsonb`
 
 
 ### create_receipt
 
-Cree un recu avec paiements, coupons et gains
+Crée un reçu avec paiements, coupons et gains. Applique les coefficients XP et cashback du profil client (100 = 1x, 150 = 1.5x, 50 = 0.5x).
 
-- **Arguments**: `p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[]`
+- **Arguments**: `p_customer_id uuid, p_establishment_id bigint, p_payment_methods jsonb, p_coupon_ids bigint[] DEFAULT ARRAY[]::bigint[]`
 - **Retour**: `jsonb`
 
 
 ### create_spending_from_cashback_payment
 
-Trigger: cree un spending lors d'un paiement cashback
+Fonction déclenchée automatiquement lors de l'insertion d'une receipt_line. 
+Si payment_method = 'cashback', crée automatiquement une entrée dans spendings.
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`
@@ -121,79 +105,90 @@ Trigger: cree un spending lors d'un paiement cashback
 
 ### create_weekly_coupon
 
-Cree un coupon hebdomadaire (3,90EUR si 50EUR+ depenses)
+Crée automatiquement un coupon de 3,90€ pour un utilisateur qui a dépensé plus de 50€ durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé.
 
 - **Arguments**: `p_customer_id uuid`
+- **Retour**: `json`
+
+
+### distribute_all_quest_rewards
+
+Distribue les recompenses pour toutes les quetes completees en attente
+
+- **Arguments**: `p_admin_id uuid DEFAULT NULL::uuid`
 - **Retour**: `json`
 
 
 ### distribute_leaderboard_rewards
 
-Distribue les recompenses leaderboard (legacy)
+Distribue automatiquement les récompenses aux TOP 10 du leaderboard
 
-- **Arguments**: `p_period_type varchar, p_force boolean`
+- **Arguments**: `p_period_type character varying, p_force boolean DEFAULT false`
 - **Retour**: `json`
 
 
 ### distribute_period_rewards_v2
 
-Distribution configurable des recompenses avec tiers
+Distribue les récompenses leaderboard avec support des tiers configurables et mode preview
 
-- **Arguments**: `p_period_type varchar, p_period_identifier varchar, p_force boolean, p_preview_only boolean, p_admin_id uuid`
+- **Arguments**: `p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying, p_force boolean DEFAULT false, p_preview_only boolean DEFAULT false, p_admin_id uuid DEFAULT NULL::uuid`
 - **Retour**: `jsonb`
+
+
+### distribute_quest_reward
+
+Distribue les recompenses pour une quete completee
+
+- **Arguments**: `p_quest_progress_id bigint, p_admin_id uuid DEFAULT NULL::uuid`
+- **Retour**: `json`
 
 
 ### get_coupon_stats
 
-Statistiques globales des coupons
+Retourne les statistiques globales des coupons pour le dashboard admin
 
 - **Arguments**: `aucun`
 - **Retour**: `jsonb`
 
 
-### get_current_user_role
-
-Retourne le role de l'utilisateur courant
-
-- **Arguments**: `aucun`
-- **Retour**: `text`
-
-
 ### get_customer_available_coupons
 
-Coupons disponibles d'un client
+Récupère les coupons disponibles (non utilisés) d'un client. 
+Accessible uniquement aux employees, establishments et admins.
+Utilisée lors du scan QR code client pour le paiement.
 
 - **Arguments**: `p_customer_id uuid`
-- **Retour**: `TABLE`
+- **Retour**: `TABLE(id bigint, created_at timestamp with time zone, customer_id uuid, used boolean, amount integer, percentage integer)`
 
 
 ### get_period_identifier
 
-Calcule l'identifiant de periode (2026-W04, 2026-01, 2026)
+Calcule l'identifiant de période (2026-W04, 2026-01, 2026) pour un type et une date donnés
 
-- **Arguments**: `p_period_type varchar, p_date timestamptz`
-- **Retour**: `varchar`
+- **Arguments**: `p_period_type character varying, p_date timestamp with time zone DEFAULT now()`
+- **Retour**: `character varying`
 
 
 ### get_period_preview
 
-Previsualise la distribution des recompenses
+Prévisualise la distribution des récompenses sans les créer
 
-- **Arguments**: `p_period_type varchar, p_period_identifier varchar`
+- **Arguments**: `p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying`
 - **Retour**: `jsonb`
 
 
 ### get_user_badges
 
-Recupere tous les badges d'un utilisateur
+Récupère tous les badges d'un utilisateur avec leurs détails complets
 
 - **Arguments**: `p_customer_id uuid`
-- **Retour**: `TABLE`
+- **Retour**: `TABLE(badge_id integer, slug character varying, name character varying, description text, icon character varying, rarity character varying, category character varying, earned_at timestamp with time zone, period_type character varying, period_identifier character varying, rank integer)`
 
 
 ### get_user_cashback_balance
 
-Solde cashback depuis la vue materialisee
+Retourne le solde cashback d'un utilisateur depuis la vue matérialisée.
+Utilisation: SELECT get_user_cashback_balance('11111111-1111-1111-1111-111111111111'::UUID);
 
 - **Arguments**: `p_customer_id uuid`
 - **Retour**: `jsonb`
@@ -201,23 +196,25 @@ Solde cashback depuis la vue materialisee
 
 ### get_user_complete_stats
 
-Statistiques completes d'un utilisateur
+Retourne toutes les statistiques d'un utilisateur depuis la vue matérialisée complète.
+Utilisation: SELECT get_user_complete_stats('11111111-1111-1111-1111-111111111111'::UUID);
 
 - **Arguments**: `p_customer_id uuid`
 - **Retour**: `jsonb`
 
 
-### get_user_info
+### get_user_quests
 
-Informations utilisateur par IDs
+Recupere toutes les quetes actives avec la progression de l'utilisateur pour la periode courante
 
-- **Arguments**: `user_ids uuid[]`
-- **Retour**: `TABLE`
+- **Arguments**: `p_customer_id uuid, p_period_type character varying DEFAULT NULL::character varying`
+- **Retour**: `json`
 
 
 ### get_user_xp_stats
 
-Statistiques XP d'un utilisateur
+Retourne les XP et statistiques d'un utilisateur depuis la vue matérialisée.
+Utilisation: SELECT get_user_xp_stats('11111111-1111-1111-1111-111111111111'::UUID);
 
 - **Arguments**: `p_customer_id uuid`
 - **Retour**: `jsonb`
@@ -225,7 +222,7 @@ Statistiques XP d'un utilisateur
 
 ### handle_new_user
 
-Cree un profil lors de la creation d'un utilisateur
+Fonction trigger qui crée automatiquement un profil dans public.profiles lors de la création d'un utilisateur dans auth.users
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`
@@ -233,7 +230,7 @@ Cree un profil lors de la creation d'un utilisateur
 
 ### handle_user_delete
 
-Supprime le profil lors de la suppression d'un utilisateur
+Supprime automatiquement le profil dans public.profiles quand un utilisateur est supprimé de auth.users
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`
@@ -241,32 +238,24 @@ Supprime le profil lors de la suppression d'un utilisateur
 
 ### sync_auth_to_profiles
 
-Synchronise auth.users vers profiles
+Synchronise tous les utilisateurs de auth.users vers public.profiles. Retourne le nombre d'utilisateurs synchronisés et leurs IDs.
 
 - **Arguments**: `aucun`
-- **Retour**: `TABLE`
+- **Retour**: `TABLE(synced_count integer, user_ids text[])`
 
 
 ### update_profile_from_auth
 
-Met a jour un profil depuis auth.users
+Met à jour un profil existant avec les données de auth.users
 
 - **Arguments**: `user_id uuid`
 - **Retour**: `void`
 
 
-### validate_coupons
+### update_quest_progress_for_receipt
 
-Valide une liste de coupons
+Met a jour la progression de toutes les quetes apres un nouveau receipt
 
-- **Arguments**: `p_customer_id uuid, p_coupon_ids bigint[]`
-- **Retour**: `jsonb`
-
-
-### validate_payment_methods
-
-Valide les methodes de paiement
-
-- **Arguments**: `p_payment_methods jsonb`
-- **Retour**: `jsonb`
+- **Arguments**: `p_receipt_id bigint`
+- **Retour**: `json`
 

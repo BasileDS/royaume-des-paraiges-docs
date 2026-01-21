@@ -1,6 +1,6 @@
 # Table: profiles
 
-Profils utilisateurs lies a auth.users
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Profils utilisateurs lies a auth.users
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 17 |
+| **Lignes** | 18 |
 
 ## Colonnes
 
@@ -17,11 +17,11 @@ Profils utilisateurs lies a auth.users
 | `id` | `uuid` | Non | gen_random_uuid() | - |
 | `created_at` | `timestamp with time zone` | Non | now() | - |
 | `attached_establishment_id` | `integer` | Oui | - | - |
-| `email` | `text` | Oui | - | Email de l'utilisateur |
-| `first_name` | `text` | Oui | - | Prenom |
-| `last_name` | `text` | Oui | - | Nom de famille |
+| `email` | `text` | Oui | - | Email de l'utilisateur (synchronisé depuis auth.users) |
+| `first_name` | `text` | Oui | - | Prénom (peut être extrait de full_name) |
+| `last_name` | `text` | Oui | - | Nom de famille (peut être extrait de full_name) |
 | `avatar_url` | `text` | Oui | - | URL de la photo de profil |
-| `phone` | `text` | Oui | - | Numero de telephone |
+| `phone` | `text` | Oui | - | Numéro de téléphone |
 | `birthdate` | `date` | Oui | - | Date de naissance |
 | `updated_at` | `timestamp with time zone` | Oui | now() | - |
 | `username` | `text` | Oui | - | - |

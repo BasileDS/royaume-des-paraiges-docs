@@ -1,6 +1,6 @@
 # Table: comments
 
-Commentaires
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Commentaires
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 2 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
@@ -30,4 +30,4 @@ Commentaires
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `comments_customer_id_fkey`: customer_id → profiles.id

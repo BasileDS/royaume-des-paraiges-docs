@@ -1,6 +1,6 @@
 # Table: spendings
 
-Depenses cashback
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Depenses cashback
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 5 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
@@ -27,4 +27,5 @@ Depenses cashback
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `spendings_customer_id_fkey`: customer_id → profiles.id
+- `spendings_receipt_id_fkey`: receipt_id → receipts.id

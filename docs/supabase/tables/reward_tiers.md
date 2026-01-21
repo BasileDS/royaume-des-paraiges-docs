@@ -1,6 +1,6 @@
 # Table: reward_tiers
 
-Paliers de recompenses leaderboard
+Paliers de récompenses pour le leaderboard (configurable par rang)
 
 ## Informations
 
@@ -8,19 +8,19 @@ Paliers de recompenses leaderboard
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 6 |
+| **Lignes** | -1 |
 
 ## Colonnes
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
 | `id` | `bigint` | Non | - | - |
-| `name` | `varchar` | Non | - | - |
-| `rank_from` | `integer` | Non | - | Rang minimum inclus |
-| `rank_to` | `integer` | Non | - | Rang maximum inclus |
+| `name` | `character varying(100)` | Non | - | - |
+| `rank_from` | `integer` | Non | - | Rang minimum inclus (ex: 1 pour le 1er) |
+| `rank_to` | `integer` | Non | - | Rang maximum inclus (ex: 3 pour les rangs 1-3) |
 | `coupon_template_id` | `bigint` | Oui | - | - |
 | `badge_type_id` | `bigint` | Oui | - | - |
-| `period_type` | `varchar` | Non | - | Type de periode: weekly, monthly, yearly |
+| `period_type` | `character varying(20)` | Non | - | Type de période: weekly, monthly, yearly |
 | `display_order` | `integer` | Oui | 0 | - |
 | `is_active` | `boolean` | Oui | true | - |
 | `created_at` | `timestamp with time zone` | Oui | now() | - |
@@ -32,4 +32,5 @@ Paliers de recompenses leaderboard
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `reward_tiers_badge_type_id_fkey`: badge_type_id → badge_types.id
+- `reward_tiers_coupon_template_id_fkey`: coupon_template_id → coupon_templates.id

@@ -1,6 +1,6 @@
 # Table: receipts
 
-Tickets de caisse
+Pas de description disponible.
 
 ## Informations
 
@@ -8,7 +8,7 @@ Tickets de caisse
 |-----------|--------|
 | **Schema** | `public` |
 | **RLS** | Active |
-| **Lignes** | 55 |
+| **Lignes** | 42 |
 
 ## Colonnes
 
@@ -26,4 +26,4 @@ Tickets de caisse
 
 ## Relations (Foreign Keys)
 
-Aucune relation definie.
+- `receipts_customer_id_fkey`: customer_id → profiles.id

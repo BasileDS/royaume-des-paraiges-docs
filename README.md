@@ -59,8 +59,7 @@ Scripts utilitaires pour la gestion de la documentation.
 Le script `sync-supabase-docs.mjs` permet de synchroniser automatiquement la documentation Supabase avec la configuration reelle du projet.
 
 ```bash
-# Prerequis: Token API Management Supabase
-export SUPABASE_ACCESS_TOKEN="sbp_xxxxx"
+# Prerequis: Token API Management Supabase présent en variablie d'environnement
 
 # Verifier les differences (dry-run)
 node scripts/sync-supabase-docs.mjs --dry-run

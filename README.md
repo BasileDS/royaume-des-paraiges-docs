@@ -11,6 +11,9 @@ docs/
 └── directus/    # Documentation Directus (CMS)
 
 migrations/      # Scripts SQL de migration Supabase
+
+scripts/         # Scripts utilitaires
+└── sync-supabase-docs.mjs  # Synchronisation auto documentation Supabase
 ```
 
 ## Utilisation comme Submodule
@@ -46,3 +49,24 @@ Documentation du CMS Directus pour la gestion de contenu.
 
 ### Migrations
 Scripts SQL pour les migrations de la base de donnees Supabase. Voir [migrations/README.md](./migrations/README.md) pour les instructions d'execution.
+
+### Scripts
+
+Scripts utilitaires pour la gestion de la documentation.
+
+#### Synchronisation Supabase
+
+Le script `sync-supabase-docs.mjs` permet de synchroniser automatiquement la documentation Supabase avec la configuration reelle du projet.
+
+```bash
+# Prerequis: Token API Management Supabase
+export SUPABASE_ACCESS_TOKEN="sbp_xxxxx"
+
+# Verifier les differences (dry-run)
+node scripts/sync-supabase-docs.mjs --dry-run
+
+# Appliquer les mises a jour
+node scripts/sync-supabase-docs.mjs
+```
+
+Voir [scripts/README.md](./scripts/README.md) pour plus de details.

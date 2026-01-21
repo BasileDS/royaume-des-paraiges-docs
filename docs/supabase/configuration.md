@@ -5,7 +5,7 @@
 | Propriete | Valeur |
 |-----------|--------|
 | **Project ID** | `uflgfsoekkgegdgecubb` |
-| **Region** | - |
+| **Region** | us-east-2 |
 | **URL API** | `https://uflgfsoekkgegdgecubb.supabase.co` |
 
 ## Vue d'ensemble
@@ -15,32 +15,39 @@ Cette documentation decrit la configuration complete de la base de donnees Supab
 ## Structure de la Documentation
 
 ```
-supabase/docs/
-├── SUPABASE-CONFIG.md           # Ce fichier
-├── tables/                      # Structure des tables
-│   ├── README.md               # Vue d'ensemble des tables
-│   ├── profiles.md             # Table profiles
-│   ├── receipts.md             # Table receipts
-│   ├── gains.md                # Table gains
-│   ├── coupons.md              # Table coupons
-│   ├── coupon_templates.md     # Table coupon_templates (nouveau)
-│   ├── reward_tiers.md         # Table reward_tiers (nouveau)
-│   ├── period_reward_configs.md # Table period_reward_configs (nouveau)
-│   ├── coupon_distribution_logs.md # Table coupon_distribution_logs (nouveau)
-│   └── ...
-├── functions/                   # Fonctions PostgreSQL
-│   ├── README.md               # Index des fonctions
-│   ├── create_receipt.md       # Fonction principale
-│   └── ...
-├── triggers/                    # Triggers
+supabase/
+├── configuration.md            # Ce fichier
+├── tables/                     # Structure des tables
+│   ├── README.md              # Vue d'ensemble des tables
+│   ├── profiles.md
+│   ├── receipts.md
+│   ├── receipt_lines.md
+│   ├── gains.md
+│   ├── spendings.md
+│   ├── coupons.md
+│   ├── coupon_templates.md
+│   ├── reward_tiers.md
+│   ├── period_reward_configs.md
+│   ├── coupon_distribution_logs.md
+│   ├── likes.md
+│   ├── comments.md
+│   ├── notes.md
+│   ├── badge_types.md
+│   ├── user_badges.md
+│   ├── leaderboard_reward_distributions.md
+│   ├── period_closures.md
+│   └── constants.md
+├── functions/                  # Fonctions PostgreSQL
 │   └── README.md
-├── policies/                    # Politiques RLS
+├── triggers/                   # Triggers
 │   └── README.md
-├── views/                       # Vues et vues materialisees
+├── policies/                   # Politiques RLS
 │   └── README.md
-├── storage/                     # Buckets et policies storage
+├── views/                      # Vues et vues materialisees
 │   └── README.md
-└── edge-functions/             # Edge Functions
+├── storage/                    # Buckets et policies storage
+│   └── README.md
+└── edge-functions/            # Edge Functions
     └── README.md
 ```
 
@@ -48,33 +55,26 @@ supabase/docs/
 
 ### Tables (18)
 
-#### Tables existantes
-
 | Table | Lignes | RLS | Description |
 |-------|--------|-----|-------------|
-| `profiles` | 18 | Oui | Profils utilisateurs |
+| `profiles` | 17 | Oui | Profils utilisateurs lies a auth.users |
 | `receipts` | 55 | Oui | Tickets de caisse |
-| `receipt_lines` | 55 | Oui | Lignes de paiement |
+| `receipt_lines` | 55 | Oui | Lignes de paiement des tickets |
 | `gains` | 55 | Oui | XP et cashback gagnes |
 | `spendings` | 5 | Oui | Depenses cashback |
-| `coupons` | 4 | Oui | Coupons de reduction |
+| `coupons` | 2 | Oui | Coupons de reduction utilisateurs |
+| `coupon_templates` | 23 | Oui | Modeles de coupons reutilisables |
+| `reward_tiers` | 6 | Oui | Paliers de recompenses leaderboard |
+| `period_reward_configs` | 0 | Oui | Config personnalisee par periode |
+| `coupon_distribution_logs` | 2 | Oui | Historique des distributions |
 | `likes` | 8 | Oui | Likes sur contenus |
 | `comments` | 2 | Oui | Commentaires |
 | `notes` | 0 | Oui | Notes/evaluations |
-| `badge_types` | 9 | Oui | Definitions badges |
-| `user_badges` | 2 | Oui | Badges obtenus |
-| `leaderboard_reward_distributions` | 1 | Oui | Historique recompenses |
-| `period_closures` | 1 | Oui | Clotures periodes |
-| `constants` | 2 | Oui | Constantes config |
-
-#### Nouvelles tables (Systeme de Coupons Administrable)
-
-| Table | Lignes | RLS | Description |
-|-------|--------|-----|-------------|
-| `coupon_templates` | 5 | Oui | Modeles de coupons reutilisables |
-| `reward_tiers` | 9 | Oui | Paliers de recompenses leaderboard |
-| `period_reward_configs` | 0 | Oui | Config personnalisee par periode |
-| `coupon_distribution_logs` | 0 | Oui | Historique des distributions |
+| `badge_types` | 9 | Oui | Definitions des badges |
+| `user_badges` | 2 | Oui | Badges obtenus par utilisateur |
+| `leaderboard_reward_distributions` | 0 | Oui | Historique recompenses leaderboard |
+| `period_closures` | 1 | Oui | Clotures de periodes |
+| `constants` | 2 | Oui | Constantes de configuration |
 
 ### Types Personnalises (Enums)
 
@@ -83,46 +83,49 @@ supabase/docs/
 | `user_role` | `client`, `employee`, `establishment`, `admin` |
 | `payment_method` | `card`, `cash`, `cashback`, `coupon` |
 
-### Fonctions (~27)
+### Fonctions (28)
 
 Fonctions principales :
-- `create_receipt` - Creation de recu avec paiements et gains
+- `create_receipt` - Cree un recu avec paiements, coupons et gains
 - `calculate_gains` - Calcul XP et cashback
-- `distribute_leaderboard_rewards` - Distribution auto des recompenses (legacy)
-
-Nouvelles fonctions (Systeme de Coupons Administrable) :
-- `distribute_period_rewards_v2` - Distribution configurable des recompenses
+- `distribute_period_rewards_v2` - Distribution configurable des recompenses leaderboard
 - `create_manual_coupon` - Creation de coupon manuel
 - `get_period_preview` - Previsualisation des distributions
 - `get_coupon_stats` - Statistiques des coupons
 - `get_period_identifier` - Calcul identifiant de periode
+- `get_user_complete_stats` - Statistiques completes utilisateur
+- `get_user_cashback_balance` - Solde cashback utilisateur
+- `get_user_badges` - Badges d'un utilisateur
+
+Fonctions legacy :
+- `distribute_leaderboard_rewards` - Distribution auto des recompenses (legacy)
+- `create_weekly_coupon` - Coupon hebdomadaire automatique
+- `create_frequency_coupon` - Coupon frequence automatique
 
 ### Triggers (1)
 
 | Trigger | Table | Description |
 |---------|-------|-------------|
-| `trigger_create_spending_on_cashback` | `receipt_lines` | Cree spending sur paiement cashback |
-
-> **Note** : Les triggers `trigger_weekly_coupon` et `trigger_frequency_coupon` ont ete supprimes et remplaces par le systeme de coupons administrable.
+| `trigger_create_spending_on_cashback` | `receipt_lines` | Cree automatiquement un spending lors d'un paiement cashback |
 
 ### Jobs pg_cron (3)
 
 | Job | Cron | Description |
 |-----|------|-------------|
-| `distribute-weekly-rewards` | `5 0 * * 1` | Distribution hebdo (Lundi 00:05 UTC) |
-| `distribute-monthly-rewards` | `10 0 1 * *` | Distribution mensuelle (1er du mois 00:10 UTC) |
-| `distribute-yearly-rewards` | `15 0 1 1 *` | Distribution annuelle (1er janvier 00:15 UTC) |
+| Job 1 | `5 0 * * 1` | Distribution hebdomadaire (Lundi 00:05 UTC) |
+| Job 2 | `10 0 1 * *` | Distribution mensuelle (1er du mois 00:10 UTC) |
+| Job 3 | `15 0 1 1 *` | Distribution annuelle (1er janvier 00:15 UTC) |
 
 ### Vues Materialisees (4)
 
-- `user_stats` - Statistiques utilisateur (XP, cashback)
-- `weekly_xp_leaderboard` - Classement hebdomadaire
-- `monthly_xp_leaderboard` - Classement mensuel
-- `yearly_xp_leaderboard` - Classement annuel
+- `user_stats` - Statistiques XP et cashback par utilisateur
+- `weekly_xp_leaderboard` - Classement hebdomadaire (lundi-dimanche)
+- `monthly_xp_leaderboard` - Classement mensuel (1er au dernier jour)
+- `yearly_xp_leaderboard` - Classement annuel (1er janvier au 31 decembre)
 
 ### Vues (1)
 
-- `reward_distribution_stats` - Statistiques des distributions
+- `reward_distribution_stats` - Statistiques des distributions de recompenses
 
 ### Storage Buckets (1)
 
@@ -130,18 +133,19 @@ Nouvelles fonctions (Systeme de Coupons Administrable) :
 
 ### Edge Functions (1)
 
-- `send-contact-email` - Envoi d'emails de contact via Brevo
+- `send-contact-email` - Envoi d'emails de contact via Brevo (JWT: Oui)
 
 ## Extensions Installees
 
-| Extension | Description |
-|-----------|-------------|
-| `uuid-ossp` | Generation UUIDs |
-| `pgcrypto` | Fonctions cryptographiques |
-| `pg_graphql` | Support GraphQL |
-| `pg_stat_statements` | Statistiques SQL |
-| `supabase_vault` | Vault Supabase |
-| `pg_cron` | Jobs cron PostgreSQL (nouveau) |
+| Extension | Schema | Version | Description |
+|-----------|--------|---------|-------------|
+| `plpgsql` | pg_catalog | 1.0 | PL/pgSQL procedural language |
+| `uuid-ossp` | extensions | 1.1 | Generation UUIDs |
+| `pgcrypto` | extensions | 1.3 | Fonctions cryptographiques |
+| `pg_graphql` | graphql | 1.5.11 | Support GraphQL |
+| `pg_stat_statements` | extensions | 1.11 | Statistiques SQL |
+| `supabase_vault` | vault | 0.3.1 | Vault Supabase |
+| `pg_cron` | pg_catalog | 1.6.4 | Jobs cron PostgreSQL |
 
 ## Schema Relationnel
 
@@ -159,7 +163,7 @@ auth.users
             ├──► spendings (customer_id)
             ├──► coupon_distribution_logs (customer_id, distributed_by)
             ├──► coupon_templates (created_by)
-            ├──► period_reward_configs (distributed_by)
+            ├──► period_reward_configs (distributed_by, created_by)
             │
             └──► receipts (customer_id)
                     │
@@ -208,10 +212,10 @@ reward_tiers ──► coupon_distribution_logs (tier_id)
          ▼
 6. Refresh vues materialisees
          │
-         └──► user_stats, weekly/monthly_xp_leaderboard
+         └──► user_stats, weekly/monthly/yearly_xp_leaderboard
 ```
 
-## Flux de Distribution des Recompenses (nouveau)
+## Flux de Distribution des Recompenses
 
 ```
 1. Job pg_cron declenche (ou admin manuel)
@@ -224,28 +228,21 @@ reward_tiers ──► coupon_distribution_logs (tier_id)
          ├──► Verification period_reward_configs (custom_tiers ?)
          │
          ▼
-3. Pour chaque utilisateur du TOP 10
+3. Pour chaque utilisateur du TOP N
          │
          ├──► Trouver le tier correspondant au rang
          ├──► Creer coupon depuis le template
+         ├──► Attribuer badge si configure
          ├──► Calculer date d'expiration
          │
          ▼
 4. Logging dans coupon_distribution_logs
          │
          ▼
-5. Mise a jour period_reward_configs (status = 'distributed')
+5. Creation period_closures avec stats
 ```
 
 ## Derniere mise a jour
 
-- **Date** : 2026-01-20
-- **Version** : 2.0.0
-- **Changements** :
-  - Ajout du systeme de coupons administrable
-  - 4 nouvelles tables (coupon_templates, reward_tiers, period_reward_configs, coupon_distribution_logs)
-  - 5 nouvelles colonnes sur la table coupons
-  - Suppression des triggers automatiques de creation de coupons
-  - Ajout de pg_cron pour les distributions automatiques
-  - 4 nouvelles fonctions PostgreSQL
-  - 4 nouvelles politiques RLS
+- **Date** : 2026-01-21
+- **Generee par** : Claude via MCP Supabase

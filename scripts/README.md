@@ -1,6 +1,13 @@
-# Scripts de Documentation
+# Scripts Utilitaires
 
-Ce dossier contient les scripts utilitaires pour la gestion de la documentation.
+Ce dossier contient les scripts utilitaires pour la gestion de la documentation et les migrations.
+
+## Table des matieres
+
+- [sync-supabase-docs.mjs](#sync-supabase-docsmjs) - Synchronisation de la documentation
+- [migrate-directus-images.ts](#migrate-directus-imagests) - Migration des images Directus vers Supabase Storage
+
+---
 
 ## sync-supabase-docs.mjs
 
@@ -188,3 +195,143 @@ jobs:
 **Fichiers non mis a jour**
 - Le script compare le contenu normalise (sans espaces/dates)
 - Utilisez `--verbose` pour voir les details de comparaison
+
+---
+
+## migrate-directus-images.ts
+
+Script pour migrer les images depuis Directus vers Supabase Storage.
+
+> Ce script fait partie de la migration Directus -> Supabase.
+> Voir `docs/migrations/DIRECTUS_TO_SUPABASE.md` pour le contexte complet.
+
+### Description
+
+Ce script :
+1. Recupere les enregistrements avec images depuis Supabase (beers, establishments, news)
+2. Pour chaque image avec un UUID Directus :
+   - Telecharge depuis `{DIRECTUS_URL}/assets/{uuid}`
+   - Detecte le type MIME (jpg, png, gif, webp)
+   - Upload vers `content-assets/{type}/{id}.{ext}`
+   - Met a jour le champ dans la base de donnees
+3. Ignore les images deja migrees (chemin ne commencant pas par un UUID)
+
+### Prerequis
+
+1. **Bucket Supabase Storage** : Creer le bucket `content-assets` via le dashboard Supabase
+   ```sql
+   -- Via SQL Editor ou Dashboard
+   INSERT INTO storage.buckets (id, name, public)
+   VALUES ('content-assets', 'content-assets', true);
+   ```
+
+2. **Politique de lecture publique** :
+   ```sql
+   CREATE POLICY "Lecture publique content-assets"
+   ON storage.objects FOR SELECT
+   USING (bucket_id = 'content-assets');
+   ```
+
+3. **Cle Service Role** : Recuperer la cle `service_role` depuis les settings du projet Supabase
+   (pas la cle `anon`, car on a besoin de bypass RLS)
+
+### Installation
+
+```bash
+cd docs/scripts
+
+# Installer les dependances (si pas deja fait)
+npm install @supabase/supabase-js typescript ts-node
+```
+
+### Utilisation
+
+```bash
+# Mode dry-run (simulation sans modification)
+SUPABASE_SERVICE_ROLE_KEY=xxx npx ts-node migrate-directus-images.ts --dry-run
+
+# Execution reelle
+SUPABASE_SERVICE_ROLE_KEY=xxx npx ts-node migrate-directus-images.ts
+```
+
+### Variables d'environnement
+
+| Variable | Description | Defaut |
+|----------|-------------|--------|
+| `SUPABASE_URL` | URL du projet Supabase | `https://uflgfsoekkgegdgecubb.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Cle service role (obligatoire) | - |
+| `DIRECTUS_URL` | URL du serveur Directus | `https://paraiges-directus.neodelta.dev` |
+
+### Structure des fichiers migres
+
+```
+content-assets/
+├── beers/
+│   ├── 1.jpg
+│   ├── 2.png
+│   └── ...
+├── establishments/
+│   ├── 1.jpg        (featured_image)
+│   ├── 1_logo.png   (logo)
+│   └── ...
+└── news/
+    ├── 1.jpg
+    └── ...
+```
+
+### Apres la migration
+
+1. Verifier que les images sont accessibles dans le bucket Supabase Storage
+2. Activer `USE_SUPABASE_STORAGE = true` dans `src/lib/services/directusService.ts`
+3. Supprimer la variable d'environnement `NEXT_PUBLIC_DIRECTUS_URL` (optionnel)
+4. Mettre a jour la checklist dans `docs/migrations/DIRECTUS_TO_SUPABASE.md`
+
+### Rollback
+
+En cas de probleme, les UUIDs Directus originaux sont affiches dans les logs.
+Pour revenir en arriere :
+
+```sql
+-- Exemple pour une biere specifique
+UPDATE beers SET featured_image = 'uuid-original' WHERE id = 42;
+```
+
+### Exemple de sortie
+
+```
+========================================
+  Migration Images Directus -> Supabase
+========================================
+
+MODE DRY-RUN: Aucune modification ne sera effectuee
+
+Supabase: https://uflgfsoekkgegdgecubb.supabase.co
+Directus: https://paraiges-directus.neodelta.dev
+Bucket: content-assets
+
+=== Verification des prerequis ===
+
+Bucket "content-assets" trouve
+Directus accessible: https://paraiges-directus.neodelta.dev
+
+Prerequisites OK
+
+=== Migration des images de bieres ===
+
+Trouvees: 111 bieres avec image
+
+  [beers/1] featured_image: abc123-uuid
+    -> (dry-run) Serait migre vers: beers/1
+  ...
+
+========================================
+  Resume de la migration
+========================================
+
+Total traite: 127
+Succes: 127
+Ignores (deja migres): 0
+Echecs: 0
+
+MODE DRY-RUN: Executez sans --dry-run pour appliquer les modifications
+```

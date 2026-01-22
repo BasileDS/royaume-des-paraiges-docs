@@ -1,6 +1,6 @@
 /**
  * Script de migration des images Directus vers Supabase Storage
- *
+ * 
  * Ce script:
  * 1. Recupere tous les enregistrements avec images depuis Supabase
  * 2. Telecharge chaque image depuis Directus

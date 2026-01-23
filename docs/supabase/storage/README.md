@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Le projet utilise **1 bucket** Supabase Storage pour stocker les fichiers.
+Le projet utilise **2 buckets** Supabase Storage pour stocker les fichiers.
 
 ## Buckets
 
@@ -19,18 +19,48 @@ Le projet utilise **1 bucket** Supabase Storage pour stocker les fichiers.
 
 **URL publique** : `https://uflgfsoekkgegdgecubb.supabase.co/storage/v1/object/public/avatars/`
 
+### content-assets
+
+| Propriété | Valeur |
+|-----------|--------|
+| **ID** | `content-assets` |
+| **Nom** | `content-assets` |
+| **Public** | ✅ Oui |
+| **Limite de taille** | Aucune |
+| **Types MIME autorisés** | Tous |
+| **Créé le** | 2026-01-22 |
+| **Origine** | Migration Directus |
+
+**URL publique** : `https://uflgfsoekkgegdgecubb.supabase.co/storage/v1/object/public/content-assets/`
+
+**Structure des dossiers** :
+
+```
+content-assets/
+├── beers/
+│   └── {beer_id}.jpg          # Images des bières
+├── establishments/
+│   ├── {establishment_id}.jpg  # Images des établissements
+│   └── {establishment_id}_logo.jpg  # Logos
+└── news/
+    └── {news_id}.jpg          # Images des actualités
+```
+
+**Note** : Ce bucket contient les images migrées depuis Directus. Les images sont référencées dans les tables `beers`, `establishments` et `news` via les colonnes `featured_image` et `logo`.
+
 ---
 
 ## Politiques RLS Storage
 
 ### Lecture (SELECT)
 
-| Policy | Condition |
-|--------|-----------|
-| Public Access | `bucket_id = 'avatars'` |
-| Public avatars are viewable by everyone | `bucket_id = 'avatars'` |
+| Policy | Bucket | Condition |
+|--------|--------|-----------|
+| Public Access | avatars | `bucket_id = 'avatars'` |
+| Public avatars are viewable by everyone | avatars | `bucket_id = 'avatars'` |
+| Public read access for content-assets | content-assets | `bucket_id = 'content-assets'` |
 
-**Résultat** : Tout le monde peut voir les avatars.
+**Résultat** : Tout le monde peut voir les avatars et les images de contenu (bières, établissements, news).
 
 ### Upload (INSERT)
 

@@ -15,12 +15,12 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 
 ## Resume
 
-- **30 tables** public avec RLS active
+- **32 tables** public avec RLS active
 - **38 fonctions** PostgreSQL
 - **4 vues materialisees** (leaderboards, stats)
 - **3 triggers** automatiques
 - **3 jobs pg_cron** pour distributions automatiques
-- **1 bucket storage** (avatars)
+- **2 buckets storage** (avatars, content-assets)
 - **1 edge function** (send-contact-email)
 - **3 enums** personnalises (payment_method, quest_type, user_role)
 

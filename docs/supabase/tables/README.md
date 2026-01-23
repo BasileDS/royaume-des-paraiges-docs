@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-La base de données contient **30 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
+La base de données contient **32 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
 
 ## Diagramme des Relations
 

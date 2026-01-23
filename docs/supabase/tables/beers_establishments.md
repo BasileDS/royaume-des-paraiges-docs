@@ -11,8 +11,8 @@ Table de liaison Many-to-Many entre bieres et etablissements.
 | `id` | bigint | Non | IDENTITY | ID auto-genere |
 | `beer_id` | integer | Non | - | FK vers beers |
 | `establishment_id` | integer | Non | - | FK vers establishments |
-| `added_time` | time | Oui | - | Heure d'ajout (usage interne) |
-| `created_at` | timestamptz | Oui | now() | Date de creation |
+| `created_at` | timestamptz | Oui | now() | Date de creation de l'enregistrement |
+| `added_at` | timestamptz | Oui | - | Date d'ajout de la biere au menu de l'etablissement |
 
 ## Cle primaire
 

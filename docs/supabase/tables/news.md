@@ -13,6 +13,7 @@ Actualites (migre depuis Directus).
 | `content` | text | Oui | - | Contenu de l'actualite |
 | `featured_image` | text | Oui | - | URL de l'image principale |
 | `created_at` | timestamptz | Oui | now() | Date de creation |
+| `updated_at` | timestamptz | Oui | now() | Date de derniere modification (auto via trigger) |
 
 ## Cle primaire
 
@@ -48,6 +49,12 @@ LEFT JOIN news_establishments ne ON n.id = ne.news_id
 LEFT JOIN establishments e ON ne.establishment_id = e.id
 GROUP BY n.id;
 ```
+
+## Triggers
+
+| Trigger | Event | Description |
+|---------|-------|-------------|
+| `set_news_updated_at` | BEFORE UPDATE | Met a jour `updated_at` automatiquement |
 
 ## Statistiques
 

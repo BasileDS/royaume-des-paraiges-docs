@@ -12,6 +12,7 @@ Brasseries (migre depuis Directus).
 | `title` | varchar | Non | - | Nom de la brasserie |
 | `country` | varchar | Oui | - | Pays d'origine |
 | `created_at` | timestamptz | Oui | now() | Date de creation |
+| `updated_at` | timestamptz | Oui | now() | Date de derniere modification (auto via trigger) |
 
 ## Cle primaire
 
@@ -43,6 +44,12 @@ ORDER BY beer_count DESC;
 SELECT * FROM breweries
 WHERE country = 'France';
 ```
+
+## Triggers
+
+| Trigger | Event | Description |
+|---------|-------|-------------|
+| `set_breweries_updated_at` | BEFORE UPDATE | Met a jour `updated_at` automatiquement |
 
 ## Statistiques
 

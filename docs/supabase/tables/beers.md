@@ -16,6 +16,7 @@ Catalogue des bieres (migre depuis Directus).
 | `abv` | numeric | Oui | - | Alcohol By Volume (degre alcool) |
 | `brewery_id` | integer | Oui | - | FK vers breweries |
 | `created_at` | timestamptz | Oui | now() | Date de creation |
+| `updated_at` | timestamptz | Oui | now() | Date de derniere modification (auto via trigger) |
 
 ## Cle primaire
 
@@ -60,6 +61,21 @@ FROM beers b
 JOIN beers_beer_styles bbs ON b.id = bbs.beer_id
 WHERE bbs.beer_style_id = 1;
 ```
+
+## Foreign Keys entrantes
+
+| Table | Colonne | ON DELETE |
+|-------|---------|-----------|
+| `comments` | `beer_id` | CASCADE |
+| `likes` | `beer_id` | CASCADE |
+| `beers_establishments` | `beer_id` | CASCADE |
+| `beers_beer_styles` | `beer_id` | CASCADE |
+
+## Triggers
+
+| Trigger | Event | Description |
+|---------|-------|-------------|
+| `set_beers_updated_at` | BEFORE UPDATE | Met a jour `updated_at` automatiquement |
 
 ## Statistiques
 

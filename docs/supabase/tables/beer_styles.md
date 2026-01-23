@@ -12,6 +12,7 @@ Styles de bieres (migre depuis Directus, anciennement "styles").
 | `title` | varchar | Non | - | Nom du style |
 | `description` | text | Oui | - | Description du style |
 | `created_at` | timestamptz | Oui | now() | Date de creation |
+| `updated_at` | timestamptz | Oui | now() | Date de derniere modification (auto via trigger) |
 
 ## Cle primaire
 
@@ -46,6 +47,12 @@ JOIN beers_beer_styles bbs ON b.id = bbs.beer_id
 JOIN beer_styles bs ON bbs.beer_style_id = bs.id
 WHERE bs.title = 'IPA';
 ```
+
+## Triggers
+
+| Trigger | Event | Description |
+|---------|-------|-------------|
+| `set_beer_styles_updated_at` | BEFORE UPDATE | Met a jour `updated_at` automatiquement |
 
 ## Statistiques
 

@@ -15,6 +15,7 @@ Seuils de niveaux utilisateur (migre depuis Directus).
 | `description` | text | Oui | - | Description du niveau |
 | `sort_order` | integer | Oui | 0 | Ordre de tri |
 | `created_at` | timestamptz | Oui | now() | Date de creation |
+| `updated_at` | timestamptz | Oui | now() | Date de derniere modification (auto via trigger) |
 
 ## Cle primaire
 
@@ -43,6 +44,12 @@ WHERE xp_required > 5000
 ORDER BY xp_required ASC
 LIMIT 1;
 ```
+
+## Triggers
+
+| Trigger | Event | Description |
+|---------|-------|-------------|
+| `set_level_thresholds_updated_at` | BEFORE UPDATE | Met a jour `updated_at` automatiquement |
 
 ## Statistiques
 

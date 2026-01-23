@@ -7,6 +7,7 @@
 | **Project ID** | `uflgfsoekkgegdgecubb` |
 | **Region** | us-east-2 |
 | **URL API** | `https://uflgfsoekkgegdgecubb.supabase.co` |
+| **PostgreSQL** | 17.6.1.003 |
 
 ## Vue d'ensemble
 
@@ -15,36 +16,14 @@ Cette documentation decrit la configuration complete de la base de donnees Supab
 ## Structure de la Documentation
 
 ```
-supabase/docs/
-├── SUPABASE-CONFIG.md           # Ce fichier
+docs/docs/supabase/
+├── configuration.md             # Ce fichier
+├── README.md                    # Vue d'ensemble
 ├── tables/                      # Structure des tables
 │   ├── README.md               # Vue d'ensemble des tables
-│   ├── available_periods.md
-│   ├── badge_types.md
-│   ├── comments.md
-│   ├── constants.md
-│   ├── coupon_distribution_logs.md
-│   ├── coupon_templates.md
-│   ├── coupons.md
-│   ├── gains.md
-│   ├── leaderboard_reward_distributions.md
-│   ├── likes.md
-│   ├── notes.md
-│   ├── period_closures.md
-│   ├── period_reward_configs.md
-│   ├── profiles.md
-│   ├── quest_completion_logs.md
-│   ├── quest_periods.md
-│   ├── quest_progress.md
-│   ├── quests.md
-│   ├── receipt_lines.md
-│   ├── receipts.md
-│   ├── reward_tiers.md
-│   ├── spendings.md
-│   ├── user_badges.md
+│   └── [table_name].md         # Documentation par table
 ├── functions/                   # Fonctions PostgreSQL
-│   ├── README.md               # Index des fonctions
-│   └── ...
+│   └── README.md               # Index des fonctions
 ├── triggers/                    # Triggers
 │   └── README.md
 ├── policies/                    # Politiques RLS
@@ -59,102 +38,147 @@ supabase/docs/
 
 ## Resume de la Base de Donnees
 
-### Tables (23)
+### Tables Public (30)
 
 | Table | Lignes | RLS | Description |
 |-------|--------|-----|-------------|
-| `available_periods` | 130 | Oui | - |
-| `badge_types` | -1 | Oui | Définitions des badges disponibles dans le système |
-| `comments` | -1 | Oui | - |
-| `constants` | -1 | Oui | - |
-| `coupon_distribution_logs` | -1 | Oui | Historique complet de toutes les distributions de coupons |
-| `coupon_templates` | -1 | Oui | Modèles de coupons réutilisables pour les récompenses |
-| `coupons` | 4 | Oui | - |
-| `gains` | 42 | Oui | - |
-| `leaderboard_reward_distributions` | -1 | Oui | Historique des récompenses distribuées aux gagnants du leaderboard |
-| `likes` | 0 | Oui | - |
-| `notes` | -1 | Oui | - |
-| `period_closures` | -1 | Oui | Tracking des périodes de leaderboard fermées et récompenses distribuées |
-| `period_reward_configs` | -1 | Oui | Configuration personnalisée des récompenses pour une période spécifique |
-| `profiles` | 18 | Oui | - |
-| `quest_completion_logs` | -1 | Oui | Historique detaille de toutes les completions de quetes avec recompenses |
-| `quest_periods` | 0 | Oui | Table de liaison pour assigner des quêtes à des périodes spécifiques (ex: 2026-W05, 2026-01, 2026) |
-| `quest_progress` | -1 | Oui | Suivi de la progression des utilisateurs sur les quetes |
-| `quests` | -1 | Oui | Definition des quetes periodiques disponibles |
-| `receipt_lines` | 42 | Oui | - |
-| `receipts` | 42 | Oui | - |
-| `reward_tiers` | -1 | Oui | Paliers de récompenses pour le leaderboard (configurable par rang) |
-| `spendings` | -1 | Oui | - |
-| `user_badges` | -1 | Oui | Collection des badges obtenus par chaque utilisateur |
+| `available_periods` | 130 | Oui | Periodes disponibles pour les quetes |
+| `badge_types` | 9 | Oui | Definitions des badges disponibles dans le systeme |
+| `beers` | 196 | Oui | Catalogue des bieres (migre depuis Directus) |
+| `beers_beer_styles` | 285 | Oui | Liaison M2M bieres-styles |
+| `beers_establishments` | 43 | Oui | Liaison M2M bieres-etablissements |
+| `beer_styles` | 47 | Oui | Styles de bieres (migre depuis Directus) |
+| `breweries` | 66 | Oui | Brasseries (migre depuis Directus) |
+| `comments` | 2 | Oui | Commentaires utilisateurs |
+| `constants` | 2 | Oui | Constantes systeme |
+| `coupon_distribution_logs` | 0 | Oui | Historique complet de toutes les distributions de coupons |
+| `coupon_templates` | 23 | Oui | Modeles de coupons reutilisables pour les recompenses |
+| `coupons` | 2 | Oui | Coupons utilisateurs |
+| `establishments` | 7 | Oui | Etablissements partenaires (migre depuis Directus) |
+| `gains` | 58 | Oui | Gains XP et cashback |
+| `leaderboard_reward_distributions` | 0 | Oui | Historique des recompenses distribuees aux gagnants du leaderboard |
+| `level_thresholds` | 30 | Oui | Seuils de niveaux utilisateur (migre depuis Directus) |
+| `likes` | 8 | Oui | Likes utilisateurs |
+| `news` | 2 | Oui | Actualites (migre depuis Directus) |
+| `news_establishments` | 3 | Oui | Liaison M2M news-etablissements |
+| `notes` | 0 | Oui | Notes utilisateurs |
+| `period_closures` | 1 | Oui | Tracking des periodes de leaderboard fermees et recompenses distribuees |
+| `period_reward_configs` | 0 | Oui | Configuration personnalisee des recompenses pour une periode specifique |
+| `profiles` | 17 | Oui | Profils utilisateurs |
+| `quest_completion_logs` | 2 | Oui | Historique detaille de toutes les completions de quetes avec recompenses |
+| `quest_periods` | 5 | Oui | Table de liaison pour assigner des quetes a des periodes specifiques |
+| `quest_progress` | 3 | Oui | Suivi de la progression des utilisateurs sur les quetes |
+| `quests` | 3 | Oui | Definition des quetes periodiques disponibles |
+| `receipt_lines` | 58 | Oui | Lignes de paiement des tickets |
+| `receipts` | 58 | Oui | Tickets de caisse |
+| `reward_tiers` | 6 | Oui | Paliers de recompenses pour le leaderboard (configurable par rang) |
+| `spendings` | 5 | Oui | Depenses cashback |
+| `user_badges` | 2 | Oui | Collection des badges obtenus par chaque utilisateur |
 
 ### Types Personnalises (Enums)
 
 | Enum | Valeurs |
 |------|---------|
-| `payment_method` | {card,cash,cashback,coupon} |
-| `user_role` | {client,employee,establishment,admin} |
+| `payment_method` | card, cash, cashback, coupon |
+| `quest_type` | xp_earned, amount_spent, establishments_visited, orders_count |
+| `user_role` | client, employee, establishment, admin |
 
-### Fonctions (36)
+### Fonctions PostgreSQL (38)
 
-Fonctions principales :
-- `award_user_badge` - Attribue un badge à un utilisateur pour une période donnée
-- `calculate_gains` - Pas de description
-- `calculate_quest_progress` - Calcule la progression actuelle d'un utilisateur pour une quete donnee
-- `check_cashback_balance` - Pas de description
-- `check_email_exists` - Pas de description
-- `check_period_closed` - Vérifie si une période de leaderboard a déjà été fermée
-- `create_frequency_coupon` - Crée automatiquement un coupon de 5% de réduction pour un utilisateur qui a passé au moins 10 commandes durant la semaine actuelle (lundi-dimanche). Un seul coupon par semaine est autorisé.
-- `create_leaderboard_reward_coupon` - Crée un coupon de récompense leaderboard (montant OU pourcentage)
-- `create_manual_coupon` - Pas de description
-- `create_receipt` - Crée un reçu avec paiements, coupons et gains. Applique les coefficients XP et cashback du profil client (100 = 1x, 150 = 1.5x, 50 = 0.5x).
+| Fonction | Arguments | Retour | Description |
+|----------|-----------|--------|-------------|
+| `award_user_badge` | p_customer_id, p_badge_slug, p_period_type, p_period_identifier, p_rank | json | Attribue un badge a un utilisateur pour une periode donnee |
+| `calculate_gains` | p_amount_for_gains | jsonb | Calcule les gains XP/cashback |
+| `calculate_quest_progress` | p_customer_id, p_quest_id, p_period_identifier | integer | Calcule la progression actuelle d'un utilisateur pour une quete donnee |
+| `check_cashback_balance` | p_customer_id, p_cashback_requested | jsonb | Verifie le solde cashback |
+| `check_email_exists` | email_to_check | boolean | Verifie si un email existe |
+| `check_period_closed` | p_period_type, p_period_identifier | boolean | Verifie si une periode de leaderboard a deja ete fermee |
+| `create_frequency_coupon` | p_customer_id | json | Cree un coupon de 5% pour 10+ commandes/semaine |
+| `create_leaderboard_reward_coupon` | p_customer_id, p_amount, p_percentage | json | Cree un coupon de recompense leaderboard |
+| `create_manual_coupon` | p_customer_id, p_template_id, p_amount, p_percentage, ... | jsonb | Cree un coupon manuellement |
+| `create_receipt` | p_customer_id, p_establishment_id, p_payment_methods, p_coupon_ids | jsonb | Cree un recu avec paiements, coupons et gains |
+| `create_spending_from_cashback_payment` | - | trigger | Trigger: cree spending sur paiement cashback |
+| `create_weekly_coupon` | p_customer_id | json | Cree un coupon 3,90€ pour 50€+ depenses/semaine |
+| `distribute_all_quest_rewards` | p_admin_id | json | Distribue les recompenses pour toutes les quetes completees |
+| `distribute_leaderboard_rewards` | p_period_type, p_force | json | Distribue les recompenses aux TOP 10 du leaderboard |
+| `distribute_period_rewards_v2` | p_period_type, p_period_identifier, p_force, p_preview_only, p_admin_id | jsonb | Distribue les recompenses leaderboard avec tiers configurables |
+| `distribute_quest_reward` | p_quest_progress_id, p_admin_id | json | Distribue les recompenses pour une quete completee |
+| `distribute_quest_rewards` | - | trigger | Trigger: distribue recompenses quand quete completee |
+| `get_coupon_stats` | - | jsonb | Retourne les statistiques globales des coupons |
+| `get_current_user_role` | - | text | Retourne le role de l'utilisateur courant |
+| `get_customer_available_coupons` | p_customer_id | TABLE | Recupere les coupons disponibles d'un client |
+| `get_period_bounds` | p_period_type, p_period_identifier | TABLE | Retourne les bornes d'une periode |
+| `get_period_identifier` | p_period_type, p_date | varchar | Calcule l'identifiant de periode (2026-W04, 2026-01, 2026) |
+| `get_period_preview` | p_period_type, p_period_identifier | jsonb | Previsualise la distribution des recompenses |
+| `get_user_badges` | p_customer_id | TABLE | Recupere tous les badges d'un utilisateur |
+| `get_user_cashback_balance` | p_customer_id | jsonb | Retourne le solde cashback d'un utilisateur |
+| `get_user_complete_stats` | p_customer_id | jsonb | Retourne toutes les statistiques d'un utilisateur |
+| `get_user_info` | user_ids | TABLE | Recupere les infos de plusieurs utilisateurs |
+| `get_user_quests` | p_customer_id, p_period_type | json | Recupere les quetes actives avec progression |
+| `get_user_xp_stats` | p_customer_id | jsonb | Retourne les XP et statistiques d'un utilisateur |
+| `handle_new_user` | - | trigger | Trigger: cree profil automatiquement |
+| `handle_user_delete` | - | trigger | Trigger: supprime profil automatiquement |
+| `sync_auth_to_profiles` | - | TABLE | Synchronise auth.users vers public.profiles |
+| `trigger_update_quest_progress` | - | trigger | Trigger: met a jour progression quetes |
+| `update_profile_from_auth` | user_id | void | Met a jour un profil depuis auth.users |
+| `update_quest_progress_for_receipt` | p_receipt_id | json | Met a jour la progression de toutes les quetes apres un receipt |
+| `validate_coupons` | p_customer_id, p_coupon_ids | jsonb | Valide une liste de coupons |
+| `validate_payment_methods` | p_payment_methods | jsonb | Valide les methodes de paiement |
 
-... et 26 autres fonctions
+### Triggers (3)
 
-### Triggers (2)
-
-| Trigger | Table | Description |
-|---------|-------|-------------|
-| `trigger_create_spending_on_cashback` | `receipt_lines` | Appelle `create_spending_from_cashback_payment` |
-| `trigger_quest_progress_on_receipt` | `receipts` | Appelle `trigger_update_quest_progress` |
+| Trigger | Table | Fonction | Description |
+|---------|-------|----------|-------------|
+| `trigger_distribute_quest_rewards` | `quest_progress` | `distribute_quest_rewards` | Distribue les recompenses quand une quete est completee |
+| `trigger_create_spending_on_cashback` | `receipt_lines` | `create_spending_from_cashback_payment` | Cree un spending lors d'un paiement cashback |
+| `trigger_quest_progress_on_receipt` | `receipts` | `trigger_update_quest_progress` | Met a jour la progression des quetes apres un receipt |
 
 ### Jobs pg_cron (3)
 
-| Job | Cron | Description |
-|-----|------|-------------|
-| Job 1 | `5 0 * * 1` | `SELECT distribute_period_rewards_v2('weekly')` |
-| Job 2 | `10 0 1 * *` | `SELECT distribute_period_rewards_v2('monthly')` |
-| Job 3 | `15 0 1 1 *` | `SELECT distribute_period_rewards_v2('yearly')` |
+| Job | Schedule | Commande | Description |
+|-----|----------|----------|-------------|
+| 1 | `5 0 * * 1` | `SELECT distribute_period_rewards_v2('weekly')` | Lundi 00:05 - Distribution hebdomadaire |
+| 2 | `10 0 1 * *` | `SELECT distribute_period_rewards_v2('monthly')` | 1er du mois 00:10 - Distribution mensuelle |
+| 3 | `15 0 1 1 *` | `SELECT distribute_period_rewards_v2('yearly')` | 1er janvier 00:15 - Distribution annuelle |
 
 ### Vues Materialisees (4)
 
-- `monthly_xp_leaderboard` - Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour récupérer username, nom, etc.
-- `user_stats` - Vue matérialisée combinant les statistiques XP et cashback par utilisateur
-- `weekly_xp_leaderboard` - Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupérer username, nom, etc.
-- `yearly_xp_leaderboard` - Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour récupérer username, nom, etc.
+| Vue | Description |
+|-----|-------------|
+| `weekly_xp_leaderboard` | Leaderboard hebdomadaire (lundi-dimanche) |
+| `monthly_xp_leaderboard` | Leaderboard mensuel (1er au dernier jour du mois) |
+| `yearly_xp_leaderboard` | Leaderboard annuel (1er janvier au 31 decembre) |
+| `user_stats` | Vue materialisee combinant les statistiques XP et cashback par utilisateur |
 
 ### Vues (1)
 
-- `reward_distribution_stats` - Pas de description
+| Vue | Description |
+|-----|-------------|
+| `reward_distribution_stats` | Statistiques de distribution des recompenses |
 
 ### Storage Buckets (1)
 
-- `avatars` - Photos de profil (public)
+| Bucket | Description |
+|--------|-------------|
+| `avatars` | Photos de profil (public) |
 
 ### Edge Functions (1)
 
-- `send-contact-email` - send-contact-email (JWT: Oui)
+| Fonction | Description |
+|----------|-------------|
+| `send-contact-email` | Envoi d'email de contact (JWT requis) |
 
 ## Extensions Installees
 
 | Extension | Schema | Version | Description |
 |-----------|--------|---------|-------------|
 | `pg_cron` | pg_catalog | 1.6.4 | Job scheduler for PostgreSQL |
-| `pg_graphql` | graphql | 1.5.11 | pg_graphql: GraphQL support |
-| `pg_stat_statements` | extensions | 1.11 | track planning and execution statistics of all SQL statements executed |
-| `pgcrypto` | extensions | 1.3 | cryptographic functions |
+| `pg_graphql` | graphql | 1.5.11 | GraphQL support |
+| `pg_stat_statements` | extensions | 1.11 | Track SQL statements statistics |
+| `pgcrypto` | extensions | 1.3 | Cryptographic functions |
 | `plpgsql` | pg_catalog | 1.0 | PL/pgSQL procedural language |
 | `supabase_vault` | vault | 0.3.1 | Supabase Vault Extension |
-| `uuid-ossp` | extensions | 1.1 | generate universally unique identifiers (UUIDs) |
+| `uuid-ossp` | extensions | 1.1 | Generate UUIDs |
 
 ## Schema Relationnel
 
@@ -173,6 +197,8 @@ auth.users
             ├──► coupon_distribution_logs (customer_id, distributed_by)
             ├──► coupon_templates (created_by)
             ├──► period_reward_configs (distributed_by)
+            ├──► quest_progress (customer_id)
+            ├──► quest_completion_logs (customer_id)
             │
             └──► receipts (customer_id)
                     │
@@ -182,18 +208,53 @@ auth.users
 
 badge_types ──► user_badges (badge_id)
             └──► reward_tiers (badge_type_id)
+            └──► quests (badge_type_id)
 
 coupons ◄── leaderboard_reward_distributions (coupon_amount_id, coupon_percentage_id)
         ◄── coupon_distribution_logs (coupon_id)
+        ◄── quest_completion_logs (coupon_id)
 
 coupon_templates ──► coupons (template_id)
                  └──► reward_tiers (coupon_template_id)
                  └──► coupon_distribution_logs (coupon_template_id)
+                 └──► quests (coupon_template_id)
+                 └──► quest_completion_logs (coupon_template_id)
 
 reward_tiers ──► coupon_distribution_logs (tier_id)
+
+quests ──► quest_progress (quest_id)
+       └──► quest_completion_logs (quest_id)
+       └──► quest_periods (quest_id)
+
+breweries ──► beers (brewery_id)
+
+beers ──► beers_establishments (beer_id)
+      └──► beers_beer_styles (beer_id)
+
+beer_styles ──► beers_beer_styles (beer_style_id)
+
+establishments ──► beers_establishments (establishment_id)
+               └──► news_establishments (establishment_id)
+
+news ──► news_establishments (news_id)
 ```
+
+## Migrations
+
+Total: **40 migrations** appliquees
+
+Dernieres migrations:
+- `20260122153755` - create_news_establishments_table
+- `20260122153753` - create_beers_beer_styles_table
+- `20260122153752` - create_beers_establishments_table
+- `20260122153739` - create_level_thresholds_table
+- `20260122153737` - create_news_table
+- `20260122153735` - create_beers_table
+- `20260122153720` - create_beer_styles_table
+- `20260122153719` - create_establishments_table
+- `20260122153709` - create_breweries_table
 
 ## Derniere mise a jour
 
-- **Date** : 2026-01-21
-- **Generee automatiquement** par `scripts/sync-supabase-docs.mjs`
+- **Date** : 2026-01-23
+- **Generee par** : Claude Code

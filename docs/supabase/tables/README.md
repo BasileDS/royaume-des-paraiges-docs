@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-La base de données contient **18 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
+La base de données contient **30 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
 
 ## Diagramme des Relations
 
@@ -19,6 +19,7 @@ La base de données contient **18 tables** dans le schéma `public`. Toutes les 
 │                 │◄────│    coupons      │
 │                 │◄────│   user_badges   │
 │                 │◄────│   spendings     │
+│                 │◄────│ quest_progress  │
 └────────┬────────┘     └─────────────────┘
          │ 1:N
          ▼
@@ -30,14 +31,9 @@ La base de données contient **18 tables** dans le schéma `public`. Toutes les 
 
 ┌─────────────────┐     ┌─────────────────┐
 │   badge_types   │────►│   user_badges   │
+│                 │────►│  reward_tiers   │
+│                 │────►│     quests      │
 └─────────────────┘     └─────────────────┘
-
-┌─────────────────────────────────────────┐
-│   leaderboard_reward_distributions      │
-│   ├── customer_id → profiles            │
-│   ├── coupon_amount_id → coupons        │
-│   └── coupon_percentage_id → coupons    │
-└─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐
 │   Système de Coupons Administrable      │
@@ -48,6 +44,33 @@ La base de données contient **18 tables** dans le schéma `public`. Toutes les 
 │       coupons    coupon_distribution_logs│
 │                                         │
 │   period_reward_configs                 │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│   Système de Quêtes                     │
+├─────────────────────────────────────────┤
+│   quests ──► quest_progress             │
+│      │              │                   │
+│      ▼              ▼                   │
+│   quest_periods   quest_completion_logs │
+│                                         │
+│   available_periods                     │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│   Contenu (migré depuis Directus)       │
+├─────────────────────────────────────────┤
+│   breweries ──► beers                   │
+│                    │                    │
+│   beer_styles ─────┼── beers_beer_styles│
+│                    │                    │
+│   establishments ──┼── beers_establishments│
+│        │           │                    │
+│        └───────────┼── news_establishments│
+│                    │                    │
+│   news ────────────┘                    │
+│                                         │
+│   level_thresholds                      │
 └─────────────────────────────────────────┘
 ```
 
@@ -86,7 +109,7 @@ La base de données contient **18 tables** dans le schéma `public`. Toutes les 
 | [leaderboard_reward_distributions](./leaderboard_reward_distributions.md) | Historique récompenses | profiles, coupons |
 | [period_closures](./period_closures.md) | Clôtures de périodes | - |
 
-### Tables du Système de Coupons Administrable (nouveau)
+### Tables du Système de Coupons Administrable
 
 | Table | Description | FK vers |
 |-------|-------------|---------|
@@ -94,6 +117,35 @@ La base de données contient **18 tables** dans le schéma `public`. Toutes les 
 | [reward_tiers](./reward_tiers.md) | Paliers de récompenses leaderboard | coupon_templates, badge_types |
 | [period_reward_configs](./period_reward_configs.md) | Config personnalisée par période | profiles |
 | [coupon_distribution_logs](./coupon_distribution_logs.md) | Historique des distributions | profiles, coupons, coupon_templates, reward_tiers |
+
+### Tables du Système de Quêtes
+
+| Table | Description | FK vers |
+|-------|-------------|---------|
+| [quests](./quests.md) | Définition des quêtes périodiques | coupon_templates, badge_types, profiles |
+| [quest_progress](./quest_progress.md) | Progression des utilisateurs | quests, profiles |
+| [quest_completion_logs](./quest_completion_logs.md) | Historique des complétions | quests, quest_progress, profiles, coupons |
+| [quest_periods](./quest_periods.md) | Liaison quêtes-périodes | quests |
+| [available_periods](./available_periods.md) | Périodes disponibles | - |
+
+### Tables de Contenu (migrées depuis Directus)
+
+| Table | Description | FK vers |
+|-------|-------------|---------|
+| [beers](./beers.md) | Catalogue des bières | breweries |
+| [breweries](./breweries.md) | Brasseries | - |
+| [beer_styles](./beer_styles.md) | Styles de bières | - |
+| [establishments](./establishments.md) | Établissements partenaires | - |
+| [news](./news.md) | Actualités | - |
+| [level_thresholds](./level_thresholds.md) | Seuils de niveaux | - |
+
+### Tables de Liaison (Many-to-Many)
+
+| Table | Description | FK vers |
+|-------|-------------|---------|
+| [beers_establishments](./beers_establishments.md) | Bières-Établissements | beers, establishments |
+| [beers_beer_styles](./beers_beer_styles.md) | Bières-Styles | beers, beer_styles |
+| [news_establishments](./news_establishments.md) | News-Établissements | news, establishments |
 
 ### Tables de Configuration
 
@@ -129,16 +181,33 @@ CREATE TYPE payment_method AS ENUM (
 );
 ```
 
+### quest_type
+
+Types de quêtes disponibles.
+
+```sql
+CREATE TYPE quest_type AS ENUM (
+  'xp_earned',              -- Gagner X XP
+  'amount_spent',           -- Dépenser X€
+  'establishments_visited', -- Visiter X établissements
+  'orders_count'            -- Passer X commandes
+);
+```
+
 ## Contraintes Uniques
 
 | Table | Contrainte | Colonnes |
 |-------|------------|----------|
 | `profiles` | `profiles_username_key` | `username` |
 | `badge_types` | `badge_types_slug_key` | `slug` |
+| `quests` | `quests_slug_key` | `slug` |
 | `user_badges` | `user_badges_customer_id_badge_id_period_identifier_key` | `customer_id`, `badge_id`, `period_identifier` |
-| `leaderboard_reward_distributions` | `leaderboard_reward_distributi_customer_id_period_type_perio_key` | `customer_id`, `period_type`, `period_identifier` |
-| `period_closures` | `period_closures_period_type_period_identifier_key` | `period_type`, `period_identifier` |
-| `period_reward_configs` | `period_reward_configs_period_type_period_identifier_key` | `period_type`, `period_identifier` |
+| `leaderboard_reward_distributions` | unique | `customer_id`, `period_type`, `period_identifier` |
+| `period_closures` | unique | `period_type`, `period_identifier` |
+| `period_reward_configs` | unique | `period_type`, `period_identifier` |
+| `quest_progress` | unique | `quest_id`, `customer_id`, `period_identifier` |
+| `quest_periods` | unique | `quest_id`, `period_identifier` |
+| `available_periods` | unique | `period_type`, `period_identifier` |
 
 ## Notes sur les Montants
 
@@ -149,3 +218,7 @@ CREATE TYPE payment_method AS ENUM (
 - `amount = 5000` → 50,00€
 
 Cela évite les problèmes de précision des nombres à virgule flottante.
+
+## Dernière mise à jour
+
+- **Date**: 2026-01-23

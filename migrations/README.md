@@ -7,6 +7,7 @@ Ce dossier contient les scripts de migration SQL pour la base de donnees Supabas
 | Fichier | Description | Date |
 |---------|-------------|------|
 | `phase4_data_migration.sql` | Migration systeme de coupons administrable | 2026-01 |
+| `fix_quest_progress_timing` | Correction timing mise a jour progression quetes | 2026-01-23 |
 
 ## Comment executer une migration
 
@@ -73,6 +74,46 @@ ORDER BY rt.period_type, rt.display_order;
 SELECT distribution_type, COUNT(*) as count
 FROM coupons
 GROUP BY distribution_type;
+```
+
+## Migration fix_quest_progress_timing (2026-01-23)
+
+### Description
+
+Correction d'un bug ou les quetes de type `xp_earned` n'etaient jamais mises a jour.
+
+### Probleme
+
+Le trigger `trigger_quest_progress_on_receipt` s'executait lors de l'insertion du receipt (etape 6 de `create_receipt`), mais les gains XP etaient crees plus tard (etape 10). La fonction `calculate_quest_progress` pour `xp_earned` cherchait les gains qui n'existaient pas encore, donc retournait toujours 0.
+
+### Solution
+
+1. Suppression du trigger `trigger_quest_progress_on_receipt`
+2. Ajout d'un appel explicite a `update_quest_progress_for_receipt()` dans `create_receipt()` apres l'insertion des gains
+
+### Changements
+
+```sql
+-- Trigger supprime
+DROP TRIGGER IF EXISTS trigger_quest_progress_on_receipt ON receipts;
+
+-- Fonction create_receipt modifiee pour appeler update_quest_progress_for_receipt
+-- apres l'etape 10 (insertion des gains)
+```
+
+### Verification
+
+```sql
+-- Verifier que le trigger n'existe plus
+SELECT trigger_name FROM information_schema.triggers
+WHERE event_object_table = 'receipts';
+
+-- Tester la progression d'une quete xp_earned
+SELECT calculate_quest_progress(
+  'customer_uuid'::uuid,
+  quest_id,
+  '2026-01'
+);
 ```
 
 ## Bonnes Pratiques

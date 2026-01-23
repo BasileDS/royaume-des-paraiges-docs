@@ -96,8 +96,11 @@ SET search_path TO 'public'
 9. **Création des receipt_lines** (coupons)
 10. **Calcul des gains** - Via `calculate_gains()`
 11. **Création du gain**
-12. **Marquage des coupons utilisés**
-13. **Rafraîchissement des vues matérialisées**
+12. **Mise à jour de la progression des quêtes** - Via `update_quest_progress_for_receipt()`
+13. **Marquage des coupons utilisés**
+14. **Rafraîchissement des vues matérialisées**
+
+> **Note** : La mise à jour des quêtes (étape 12) est appelée explicitement après la création des gains pour garantir que les quêtes de type `xp_earned` puissent calculer correctement la progression XP.
 
 ## Exemple d'Utilisation
 

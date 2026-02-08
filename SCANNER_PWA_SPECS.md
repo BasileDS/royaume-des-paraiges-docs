@@ -1,10 +1,6 @@
 # Royaume Paraiges Scanner - Specifications Fonctionnelles
 
 > **Application** : PWA pour serveurs en etablissements (bars/restaurants)
-> **Version** : 1.0.0
-> **Date** : 2026-02-04
-
----
 
 ## Table des matieres
 
@@ -59,23 +55,6 @@ Les utilisateurs de l'application doivent avoir l'un des roles suivants dans `pr
 - **Authentification obligatoire** via Supabase Auth
 - **Liaison etablissement** : L'utilisateur doit avoir un `attached_establishment_id` valide
 - **Restriction** : Les receipts ne peuvent etre crees que pour l'etablissement de reference du serveur
-
-### Verification a l'authentification
-
-```typescript
-// Pseudo-code de verification
-const user = await supabase.auth.getUser();
-const { data: profile } = await supabase
-  .from('profiles')
-  .select('role, attached_establishment_id')
-  .eq('id', user.id)
-  .single();
-
-const isAuthorized =
-  ['employee', 'admin', 'establishment'].includes(profile.role) &&
-  profile.attached_establishment_id !== null;
-```
-
 ---
 
 ## Architecture technique

@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Toutes les tables ont **RLS activé**. La base contient **38 politiques** réparties sur les différentes tables.
+Toutes les tables ont **RLS activé**. La base contient **40 politiques** réparties sur les différentes tables.
 
 ## Concepts de Base
 
@@ -50,12 +50,13 @@ USING (true);
 
 ---
 
-### receipts (2 policies)
+### receipts (3 policies)
 
 | Policy | Opération | Rôles | Condition |
 |--------|-----------|-------|-----------|
 | Users can read their own receipts | SELECT | authenticated | `auth.uid() = customer_id` |
 | Waiters can read all receipts | SELECT | authenticated | `role = 'establishment'` |
+| Admins can view all receipts | SELECT | authenticated | `role = 'admin'` |
 
 ```sql
 -- Exemple: Employees/Establishments voient tous les receipts
@@ -67,6 +68,18 @@ USING (
     SELECT 1 FROM profiles
     WHERE profiles.id = auth.uid()
     AND profiles.role = 'establishment'
+  )
+);
+
+-- Admins voient tous les receipts
+CREATE POLICY "Admins can view all receipts"
+ON receipts FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM profiles
+    WHERE profiles.id = auth.uid()
+    AND profiles.role = 'admin'::user_role
   )
 );
 ```
@@ -97,12 +110,13 @@ USING (
 
 ---
 
-### gains (2 policies)
+### gains (3 policies)
 
 | Policy | Opération | Rôles | Condition |
 |--------|-----------|-------|-----------|
 | Users can read their own gains | SELECT | authenticated | Via receipt → customer_id |
 | Waiters can read all gains | SELECT | authenticated | `role = 'establishment'` |
+| Admins can view all gains | SELECT | authenticated | `role = 'admin'` |
 
 ---
 
@@ -331,6 +345,9 @@ USING (
 | Table | SELECT | INSERT | UPDATE | DELETE |
 |-------|--------|--------|--------|--------|
 | * | all | varies | varies | varies |
+| receipts | ✅ | ❌ | ❌ | ❌ |
+| gains | ✅ | ❌ | ❌ | ❌ |
+| receipt_lines | ✅ | ❌ | ❌ | ❌ |
 | coupon_templates | ✅ | ✅ | ✅ | ✅ |
 | reward_tiers | ✅ | ✅ | ✅ | ✅ |
 | period_reward_configs | ✅ | ✅ | ✅ | ✅ |

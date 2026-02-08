@@ -28,7 +28,8 @@ Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour r�
 
 ### user_stats
 
-Vue matérialisée combinant les statistiques XP et cashback par utilisateur
+Vue matérialisée combinant les statistiques XP et cashback par utilisateur.
+Joint directement `profiles → gains` via `customer_id` (au lieu de passer par `receipts`), ce qui permet de comptabiliser les gains avec `receipt_id = NULL` (bonus cashback directs).
 
 ```sql
  SELECT p.id AS customer_id,
@@ -43,8 +44,7 @@ Vue matérialisée combinant les statistiques XP et cashback par utilisateur
              JOIN receipts r_sub ON r_sub.id = rl.receipt_id
           WHERE r_sub.customer_id = p.id AND rl.payment_method = 'cashback'::payment_method), 0::bigint) AS cashback_available
    FROM profiles p
-     LEFT JOIN receipts r ON r.customer_id = p.id
-     LEFT JOIN gains g ON g.receipt_id = r.id
+     LEFT JOIN gains g ON g.customer_id = p.id
   GROUP BY p.id;
 ```
 

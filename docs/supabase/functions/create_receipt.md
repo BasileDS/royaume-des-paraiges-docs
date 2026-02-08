@@ -40,7 +40,8 @@ SET search_path TO 'public'
 | `card` | Carte bancaire | ✅ |
 | `cash` | Espèces | ✅ |
 | `cashback` | Solde cashback | ❌ |
-| `coupon` | Coupon (ajouté automatiquement) | ❌ |
+
+> **Note** : Le type `coupon` n'est plus utilisé dans les receipt_lines. Les coupons pourcentage ajoutent un bonus cashback sans réduire le prix.
 
 ## Retour
 
@@ -50,9 +51,8 @@ SET search_path TO 'public'
 {
   "success": true,
   "receipt_id": 123,
-  "total_amount": 2300,
-  "payment_amount": 2000,
-  "coupon_amount": 300,
+  "total_amount": 2500,
+  "payment_amount": 2500,
   "gains": {
     "gain_id": 456,
     "xp_base": 150,
@@ -60,17 +60,21 @@ SET search_path TO 'public'
     "xp_gained": 150,
     "cashback_base": 75,
     "cashback_coefficient": 100,
-    "cashback_gained": 75,
+    "cashback_coupon_bonus": 375,
+    "cashback_gained": 450,
     "amount_for_gains": 1500
   },
   "cashback_balance": {
     "available_before": 1000,
     "spent": 300,
-    "earned": 75,
-    "available_after": 775
+    "earned": 450,
+    "available_after": 1150
   },
   "coupons_used": 1
 }
+```
+
+> **Note** : `cashback_coupon_bonus` est le bonus cashback additionnel généré par les coupons pourcentage. Il est calculé sur le montant total de la commande (`total_amount * coupon_percentage / 100`).
 ```
 
 ### Erreur
@@ -87,15 +91,15 @@ SET search_path TO 'public'
 
 1. **Vérification des permissions** - Seuls `employee`, `establishment`, `admin` peuvent créer
 2. **Récupération des coefficients** - `xp_coefficient` et `cashback_coefficient` du profil
-3. **Validation des coupons** - Via `validate_coupons()`
+3. **Validation des coupons** - Via `validate_coupons()` (seuls les coupons % sont acceptés)
 4. **Validation des paiements** - Via `validate_payment_methods()`
 5. **Vérification du solde cashback** - Via `check_cashback_balance()`
-6. **Calcul du montant total**
+6. **Calcul du montant total** (= montant des paiements, les coupons ne réduisent plus le prix)
 7. **Création du receipt**
-8. **Création des receipt_lines** (paiements)
-9. **Création des receipt_lines** (coupons)
-10. **Calcul des gains** - Via `calculate_gains()`
-11. **Création du gain**
+8. **Création des receipt_lines** (paiements uniquement)
+9. **Calcul des gains** - Via `calculate_gains()`
+10. **Ajout du bonus cashback coupon** - Si coupon %, ajoute `total_amount * percentage / 100` au cashback
+11. **Création du gain** (avec `customer_id` et `source_type='receipt'`)
 12. **Mise à jour de la progression des quêtes** - Via `update_quest_progress_for_receipt()`
 13. **Marquage des coupons utilisés**
 14. **Rafraîchissement des vues matérialisées**
@@ -165,8 +169,18 @@ Après l'insertion du receipt, deux triggers peuvent créer des coupons :
 | `Le montant total doit être positif` | Montant ≤ 0 |
 | `Aucune méthode de paiement fournie` | Tableau de paiements vide |
 
+## Système de Coupons (Bonus Cashback)
+
+Depuis la migration vers le système de bonus cashback :
+
+- **Coupons montant fixe** (ex: 5 EUR) : sont des **"Bonus Cashback"** crédités immédiatement au solde cashback du joueur dès l'attribution. Ils ne peuvent pas être utilisés sur une commande (`validate_coupons` les rejette).
+- **Coupons pourcentage** (ex: 15%) : restent des **"Coupons"** mais au lieu de réduire le prix, ils ajoutent X% de cashback supplémentaire sur le montant total de la commande. Le client paie le montant total.
+- La fonction `get_customer_available_coupons()` ne retourne plus que les coupons pourcentage.
+- Il n'y a plus de `receipt_lines` avec `payment_method = 'coupon'`.
+
 ## Notes
 
 - La fonction est **transactionnelle** : en cas d'erreur, tout est annulé
 - Les vues matérialisées sont rafraîchies **CONCURRENTLY** (non-bloquant)
-- Les gains sont calculés uniquement sur les paiements `card` et `cash`
+- Les gains de base sont calculés uniquement sur les paiements `card` et `cash`
+- Le bonus cashback des coupons % est calculé sur le montant **total** de la commande

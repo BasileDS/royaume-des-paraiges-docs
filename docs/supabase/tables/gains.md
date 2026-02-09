@@ -22,6 +22,7 @@ Enregistre les gains (XP et cashback) des utilisateurs. Peut etre lie a un recei
 | `cashback_money` | `integer` | Oui | - | Cashback gagne (centimes) |
 | `source_type` | `varchar(30)` | Oui | 'receipt' | Type de source du gain |
 | `coupon_id` | `bigint` | Oui | - | FK vers coupons.id (tracabilite du coupon source) |
+| `period_identifier` | `varchar` | Oui | - | Identifiant de periode (ex: 2026-W07, 2026-02) |
 
 ## Valeurs de source_type
 

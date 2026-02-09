@@ -8,8 +8,9 @@ Credite un bonus cashback directement au solde d'un utilisateur via la table `ga
 CREATE FUNCTION credit_bonus_cashback(
   p_customer_id UUID,
   p_amount INTEGER,
-  p_coupon_id BIGINT,
-  p_source_type VARCHAR DEFAULT 'bonus_cashback_manual'
+  p_coupon_id BIGINT DEFAULT NULL,
+  p_source_type VARCHAR DEFAULT 'bonus_cashback_manual',
+  p_period_identifier VARCHAR DEFAULT NULL
 ) RETURNS BIGINT
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -22,8 +23,9 @@ SET search_path TO 'public'
 |-----------|------|--------|---------|-------------|
 | `p_customer_id` | `UUID` | Oui | - | ID du client (profiles.id) |
 | `p_amount` | `INTEGER` | Oui | - | Montant en centimes |
-| `p_coupon_id` | `BIGINT` | Oui | - | ID du coupon source (tracabilite) |
+| `p_coupon_id` | `BIGINT` | Non | `NULL` | ID du coupon source (tracabilite) |
 | `p_source_type` | `VARCHAR` | Non | `'bonus_cashback_manual'` | Type de source |
+| `p_period_identifier` | `VARCHAR` | Non | `NULL` | Identifiant de periode (ex: 2026-W07, 2026-02) |
 
 ## Valeurs de p_source_type
 
@@ -41,7 +43,7 @@ Retourne l'`id` du gain cree (`BIGINT`).
 
 ## Actions
 
-1. Insere un `gains` avec `receipt_id=NULL`, `establishment_id=NULL`, `xp=0`, `cashback_money=p_amount`
+1. Insere un `gains` avec `receipt_id=NULL`, `establishment_id=NULL`, `xp=0`, `cashback_money=p_amount`, `period_identifier=p_period_identifier`
 2. Rafraichit la vue materialisee `user_stats` (CONCURRENTLY)
 
 ## Exemple
@@ -51,7 +53,8 @@ SELECT credit_bonus_cashback(
   '123e4567-e89b-12d3-a456-426614174000'::UUID,
   500,  -- 5 EUR
   42,   -- coupon_id
-  'bonus_cashback_manual'
+  'bonus_cashback_manual',
+  '2026-W07'  -- period_identifier (optionnel)
 );
 ```
 

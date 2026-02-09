@@ -2,7 +2,7 @@
 
 Cette section documente toutes les fonctions PostgreSQL disponibles dans le schema `public`.
 
-## Liste des fonctions (36)
+## Liste des fonctions (38)
 
 | Fonction | Arguments | Retour | Volatilite | Security Definer |
 |----------|-----------|--------|------------|------------------|
@@ -12,6 +12,8 @@ Cette section documente toutes les fonctions PostgreSQL disponibles dans le sche
 | `check_cashback_balance` | p_customer_id uuid, p_cashback_requested integer | `jsonb` | VOLATILE | Non |
 | `check_email_exists` | email_to_check text | `boolean` | VOLATILE | Oui |
 | `check_period_closed` | p_period_type character varying, p_period_identifier character varying | `boolean` | VOLATILE | Non |
+| `credit_bonus_cashback` | p_customer_id uuid, p_amount integer, p_coupon_id bigint DEFAULT NULL, p_source_type varchar DEFAULT 'bonus_cashback_manual', p_period_identifier varchar DEFAULT NULL | `bigint` | VOLATILE | Oui |
+| `credit_bonus_cashback` | p_customer_id uuid, p_amount integer, p_coupon_id bigint, p_source_type varchar DEFAULT 'bonus_cashback_manual' | `bigint` | VOLATILE | Oui |
 | `create_frequency_coupon` | p_customer_id uuid | `json` | VOLATILE | Oui |
 | `create_leaderboard_reward_coupon` | p_customer_id uuid, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer | `json` | VOLATILE | Oui |
 | `create_manual_coupon` | p_customer_id uuid, p_template_id bigint DEFAULT NULL::bigint, p_amount integer DEFAULT NULL::integer, p_percentage integer DEFAULT NULL::integer, p_expires_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_validity_days integer DEFAULT NULL::integer, p_notes text DEFAULT NULL::text, p_admin_id uuid DEFAULT NULL::uuid | `jsonb` | VOLATILE | Oui |
@@ -68,6 +70,14 @@ Vérifie si une période de leaderboard a déjà été fermée
 
 - **Arguments**: `p_period_type character varying, p_period_identifier character varying`
 - **Retour**: `boolean`
+
+
+### credit_bonus_cashback
+
+Credite un bonus cashback directement au solde d'un utilisateur via la table `gains`. Voir [credit_bonus_cashback.md](./credit_bonus_cashback.md) pour la documentation complete.
+
+- **Arguments**: `p_customer_id uuid, p_amount integer, p_coupon_id bigint, p_source_type varchar, p_period_identifier varchar`
+- **Retour**: `bigint` (id du gain cree)
 
 
 ### create_frequency_coupon

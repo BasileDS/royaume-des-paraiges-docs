@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-La base de données contient **32 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
+La base de données contient **33 tables** dans le schéma `public`. Toutes les tables ont **RLS activé**.
 
 ## Diagramme des Relations
 
@@ -152,6 +152,7 @@ La base de données contient **32 tables** dans le schéma `public`. Toutes les 
 | Table | Description |
 |-------|-------------|
 | [constants](./constants.md) | Constantes de configuration |
+| [legal_pages](./legal_pages.md) | Pages legales (CGU, confidentialite) |
 
 ## Types Personnalisés (Enums)
 
@@ -177,7 +178,7 @@ CREATE TYPE payment_method AS ENUM (
   'card',     -- Carte bancaire
   'cash',     -- Espèces
   'cashback', -- Utilisation du solde cashback
-  'coupon'    -- Utilisation d'un coupon
+  'coupon'    -- Deprecated: les coupons sont geres via gains/bonus cashback depuis fev 2026
 );
 ```
 
@@ -221,4 +222,4 @@ Cela évite les problèmes de précision des nombres à virgule flottante.
 
 ## Dernière mise à jour
 
-- **Date**: 2026-01-23
+- **Date**: 2026-02-09

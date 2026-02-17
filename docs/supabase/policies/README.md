@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Toutes les tables ont **RLS activé**. La base contient **40 politiques** réparties sur les différentes tables.
+Toutes les tables ont **RLS activé**. La base contient **41 politiques** réparties sur les différentes tables.
 
 ## Concepts de Base
 
@@ -120,12 +120,13 @@ USING (
 
 ---
 
-### spendings (3 policies)
+### spendings (4 policies)
 
 | Policy | Opération | Rôles | Condition |
 |--------|-----------|-------|-----------|
 | Users can read their own spendings | SELECT | authenticated | `auth.uid() = customer_id` |
 | Establishments can read all spendings | SELECT | authenticated | `role = 'establishment'` |
+| Admins can view all spendings | SELECT | authenticated | `role = 'admin'` |
 | Establishments can create spendings | INSERT | authenticated | `role = 'establishment'` + même establishment |
 
 ```sql
@@ -347,6 +348,7 @@ USING (
 | * | all | varies | varies | varies |
 | receipts | ✅ | ❌ | ❌ | ❌ |
 | gains | ✅ | ❌ | ❌ | ❌ |
+| spendings | ✅ | ❌ | ❌ | ❌ |
 | receipt_lines | ✅ | ❌ | ❌ | ❌ |
 | coupon_templates | ✅ | ✅ | ✅ | ✅ |
 | reward_tiers | ✅ | ✅ | ✅ | ✅ |

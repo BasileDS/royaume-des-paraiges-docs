@@ -9,7 +9,8 @@ CREATE FUNCTION create_receipt(
   p_customer_id UUID,
   p_establishment_id BIGINT,
   p_payment_methods JSONB,
-  p_coupon_ids BIGINT[] DEFAULT ARRAY[]::BIGINT[]
+  p_coupon_ids BIGINT[] DEFAULT ARRAY[]::BIGINT[],
+  p_employee_id UUID DEFAULT NULL
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -24,6 +25,7 @@ SET search_path TO 'public'
 | `p_establishment_id` | `BIGINT` | ✅ | ID de l'établissement (Directus) |
 | `p_payment_methods` | `JSONB` | ✅ | Tableau des méthodes de paiement |
 | `p_coupon_ids` | `BIGINT[]` | ❌ | IDs des coupons à utiliser |
+| `p_employee_id` | `UUID` | ❌ | ID de l'employe createur. Si NULL, utilise auth.uid() |
 
 ### Format de p_payment_methods
 

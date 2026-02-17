@@ -241,20 +241,21 @@ news ──► news_establishments (news_id)
 
 ## Migrations
 
-Total: **40 migrations** appliquees
+Total: **72 migrations** appliquees
 
 Dernieres migrations:
-- `20260122153755` - create_news_establishments_table
-- `20260122153753` - create_beers_beer_styles_table
-- `20260122153752` - create_beers_establishments_table
-- `20260122153739` - create_level_thresholds_table
-- `20260122153737` - create_news_table
-- `20260122153735` - create_beers_table
-- `20260122153720` - create_beer_styles_table
-- `20260122153719` - create_establishments_table
-- `20260122153709` - create_breweries_table
+- `20260209140738` - update_distribute_period_rewards_v2_with_period_v2
+- `20260209140636` - update_distribute_quest_reward_with_period
+- `20260209140616` - update_distribute_quest_rewards_trigger_with_period
+- `20260209140555` - update_credit_bonus_cashback_with_period
+- `20260209140542` - add_period_identifier_to_gains
+- `20260209133926` - fix_gains_rls_policy_for_bonus_gains
+- `20260209130009` - drop_duplicate_calculate_quest_progress
+- `20260209110824` - create_legal_pages_table
+- `20260208232416` - fix_check_cashback_balance_include_all_gains
+- `20260208230901` - fix_distribute_quest_rewards_missing_customer_id
 
 ## Derniere mise a jour
 
-- **Date** : 2026-01-23
+- **Date** : 2026-02-17
 - **Generee par** : Claude Code

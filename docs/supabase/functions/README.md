@@ -2,7 +2,7 @@
 
 Cette section documente toutes les fonctions PostgreSQL disponibles dans le schema `public`.
 
-## Liste des fonctions (38)
+## Liste des fonctions (40)
 
 | Fonction | Arguments | Retour | Volatilite | Security Definer |
 |----------|-----------|--------|------------|------------------|
@@ -24,6 +24,7 @@ Cette section documente toutes les fonctions PostgreSQL disponibles dans le sche
 | `distribute_leaderboard_rewards` | p_period_type character varying, p_force boolean DEFAULT false | `json` | VOLATILE | Oui |
 | `distribute_period_rewards_v2` | p_period_type character varying, p_period_identifier character varying DEFAULT NULL::character varying, p_force boolean DEFAULT false, p_preview_only boolean DEFAULT false, p_admin_id uuid DEFAULT NULL::uuid | `jsonb` | VOLATILE | Oui |
 | `distribute_quest_reward` | p_quest_progress_id bigint, p_admin_id uuid DEFAULT NULL::uuid | `json` | VOLATILE | Oui |
+| `distribute_quest_rewards` | - | `trigger` | VOLATILE | Non |
 | `get_coupon_stats` | - | `jsonb` | VOLATILE | Oui |
 | `get_current_user_role` | - | `text` | VOLATILE | Oui |
 | `get_customer_available_coupons` | p_customer_id uuid | `TABLE(id bigint, created_at timestamp with time zone, customer_id uuid, used boolean, amount integer, percentage integer)` | VOLATILE | Oui |
@@ -37,6 +38,7 @@ Cette section documente toutes les fonctions PostgreSQL disponibles dans le sche
 | `get_user_quests` | p_customer_id uuid, p_period_type character varying DEFAULT NULL::character varying | `json` | VOLATILE | Oui |
 | `get_user_xp_stats` | p_customer_id uuid | `jsonb` | STABLE | Non |
 | `handle_new_user` | - | `trigger` | VOLATILE | Oui |
+| `set_updated_at` | - | `trigger` | VOLATILE | Non |
 | `handle_user_delete` | - | `trigger` | VOLATILE | Oui |
 | `sync_auth_to_profiles` | - | `TABLE(synced_count integer, user_ids text[])` | VOLATILE | Oui |
 | `trigger_update_quest_progress` | - | `trigger` | VOLATILE | Oui |
@@ -153,6 +155,14 @@ Distribue les recompenses pour une quete completee
 - **Retour**: `json`
 
 
+### distribute_quest_rewards
+
+Fonction trigger declenchee quand le statut d'un `quest_progress` passe a `completed`. Cree automatiquement les coupons (bonus cashback si montant fixe), attribue les badges, donne les bonus XP/cashback directs, et logue dans `quest_completion_logs`. Met le statut a `rewarded` et `rewarded_at` apres traitement.
+
+- **Arguments**: `aucun`
+- **Retour**: `trigger`
+
+
 ### get_coupon_stats
 
 Retourne les statistiques globales des coupons pour le dashboard admin
@@ -233,6 +243,14 @@ Utilisation: SELECT get_user_xp_stats('11111111-1111-1111-1111-111111111111'::UU
 ### handle_new_user
 
 Fonction trigger qui crée automatiquement un profil dans public.profiles lors de la création d'un utilisateur dans auth.users
+
+- **Arguments**: `aucun`
+- **Retour**: `trigger`
+
+
+### set_updated_at
+
+Fonction trigger generique qui met a jour la colonne `updated_at` a `now()` lors de la modification d'une ligne. Utilisee sur les tables de contenu migrees depuis Directus (breweries, establishments, beer_styles, beers, news, level_thresholds, etc.).
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`

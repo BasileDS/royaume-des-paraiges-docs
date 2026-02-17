@@ -222,4 +222,4 @@ Cela évite les problèmes de précision des nombres à virgule flottante.
 
 ## Dernière mise à jour
 
-- **Date**: 2026-02-09
+- **Date**: 2026-02-17

@@ -10,7 +10,8 @@ CREATE FUNCTION create_receipt(
   p_establishment_id BIGINT,
   p_payment_methods JSONB,
   p_coupon_ids BIGINT[] DEFAULT ARRAY[]::BIGINT[],
-  p_employee_id UUID DEFAULT NULL
+  p_employee_id UUID DEFAULT NULL,
+  p_consumption_items JSONB DEFAULT NULL
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -26,6 +27,7 @@ SET search_path TO 'public'
 | `p_payment_methods` | `JSONB` | ✅ | Tableau des méthodes de paiement |
 | `p_coupon_ids` | `BIGINT[]` | ❌ | IDs des coupons à utiliser |
 | `p_employee_id` | `UUID` | ❌ | ID de l'employe createur. Si NULL, utilise auth.uid() |
+| `p_consumption_items` | `JSONB` | ❌ | Tableau des types de consommation (optionnel) |
 
 ### Format de p_payment_methods
 
@@ -44,6 +46,26 @@ SET search_path TO 'public'
 | `cashback` | Solde cashback | ❌ |
 
 > **Note** : Le type `coupon` n'est plus utilisé dans les receipt_lines. Les coupons pourcentage ajoutent un bonus cashback sans réduire le prix.
+
+### Format de p_consumption_items
+
+```json
+[
+  {"type": "biere", "quantity": 3},
+  {"type": "cocktail", "quantity": 1}
+]
+```
+
+| Type | Description |
+|------|-------------|
+| `cocktail` | Cocktails |
+| `biere` | Bieres |
+| `alcool` | Alcools (hors biere/cocktail) |
+| `soft` | Boissons sans alcool |
+| `boisson_chaude` | Cafe, the, chocolat, etc. |
+| `restauration` | Nourriture |
+
+> **Note** : Ce parametre est entierement optionnel. Si `NULL` ou tableau vide, aucun consumption item n'est cree.
 
 ## Retour
 
@@ -99,6 +121,7 @@ SET search_path TO 'public'
 6. **Calcul du montant total** (= montant des paiements, les coupons ne réduisent plus le prix)
 7. **Création du receipt**
 8. **Création des receipt_lines** (paiements uniquement)
+8b. **Création des consumption items** (optionnel) - Si `p_consumption_items` est fourni, insere dans `receipt_consumption_items`
 9. **Calcul des gains** - Via `calculate_gains()`
 10. **Ajout du bonus cashback coupon** - Si coupon %, ajoute `total_amount * percentage / 100` au cashback
 11. **Création du gain** (avec `customer_id` et `source_type='receipt'`)
@@ -139,6 +162,19 @@ if (data?.success) {
 } else {
   console.error('Erreur:', data?.error);
 }
+
+// Paiement avec tracking des consommations
+const { data, error } = await supabase.rpc('create_receipt', {
+  p_customer_id: customerId,
+  p_establishment_id: 1,
+  p_payment_methods: [
+    { method: 'card', amount: 3500 }
+  ],
+  p_consumption_items: [
+    { type: 'biere', quantity: 3 },
+    { type: 'cocktail', quantity: 1 }
+  ]
+});
 ```
 
 ### SQL Direct
@@ -170,6 +206,7 @@ Après l'insertion du receipt, deux triggers peuvent créer des coupons :
 | `Solde cashback insuffisant` | Pas assez de cashback disponible |
 | `Le montant total doit être positif` | Montant ≤ 0 |
 | `Aucune méthode de paiement fournie` | Tableau de paiements vide |
+| `La quantite de consommation doit etre un entier positif` | Quantite de consumption item ≤ 0 ou NULL |
 
 ## Système de Coupons (Bonus Cashback)
 

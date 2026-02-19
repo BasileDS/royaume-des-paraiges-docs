@@ -15,14 +15,14 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 
 ## Resume
 
-- **33 tables** public avec RLS active
+- **34 tables** public avec RLS active
 - **40 fonctions** PostgreSQL
 - **4 vues materialisees** (leaderboards, stats)
 - **3 triggers** automatiques
 - **3 jobs pg_cron** pour distributions automatiques
 - **2 buckets storage** (avatars, content-assets)
 - **1 edge function** (send-contact-email)
-- **3 enums** personnalises (payment_method, quest_type, user_role)
+- **4 enums** personnalises (consumption_type, payment_method, quest_type, user_role)
 
 ## Tables par Categorie
 
@@ -51,6 +51,7 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 ### Transactions
 - `receipts` - Tickets de caisse (64 lignes)
 - `receipt_lines` - Lignes de paiement (65 lignes)
+- `receipt_consumption_items` - Types de consommation (optionnel)
 - `gains` - Gains XP/cashback (72 lignes)
 - `spendings` - Depenses cashback (1 ligne)
 
@@ -91,4 +92,4 @@ Les 72 migrations SQL sont appliquees automatiquement. Les dernieres concernent 
 
 ## Derniere mise a jour
 
-- **Date**: 2026-02-17
+- **Date**: 2026-02-19

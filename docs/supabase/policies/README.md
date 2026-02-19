@@ -110,6 +110,18 @@ USING (
 
 ---
 
+### receipt_consumption_items (3 policies)
+
+| Policy | Opération | Rôles | Condition |
+|--------|-----------|-------|-----------|
+| Clients can view their own receipt_consumption_items | SELECT | authenticated | Via receipt → customer_id |
+| Establishments can view their receipt_consumption_items | SELECT | authenticated | `role = 'establishment'` |
+| Admins can view all receipt_consumption_items | SELECT | authenticated | `role = 'admin'` |
+
+> Même pattern que `receipt_lines`. L'insertion est gérée par `create_receipt()` (SECURITY DEFINER).
+
+---
+
 ### gains (3 policies)
 
 | Policy | Opération | Rôles | Condition |

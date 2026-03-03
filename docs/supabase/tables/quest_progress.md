@@ -21,7 +21,7 @@ Suivi de la progression des utilisateurs sur les quetes
 | `period_identifier` | `character varying(20)` | Non | - | - |
 | `current_value` | `integer` | Non | 0 | - |
 | `target_value` | `integer` | Non | - | - |
-| `status` | `character varying(20)` | Non | 'in_progress'::character varying | in_progress: en cours, completed: objectif atteint mais pas encore recompense, rewarded: recompenses distribuees |
+| `status` | `character varying(20)` | Non | 'in_progress'::character varying | in_progress: en cours, completed: objectif atteint mais pas encore recompense, rewarded: recompenses distribuees, expired: periode terminee sans completion |
 | `completed_at` | `timestamp with time zone` | Oui | - | - |
 | `rewarded_at` | `timestamp with time zone` | Oui | - | - |
 | `created_at` | `timestamp with time zone` | Non | now() | - |

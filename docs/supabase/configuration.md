@@ -83,7 +83,7 @@ docs/docs/supabase/
 | `quest_type` | xp_earned, amount_spent, establishments_visited, orders_count |
 | `user_role` | client, employee, establishment, admin |
 
-### Fonctions PostgreSQL (38)
+### Fonctions PostgreSQL (39)
 
 | Fonction | Arguments | Retour | Description |
 |----------|-----------|--------|-------------|
@@ -104,6 +104,7 @@ docs/docs/supabase/
 | `distribute_period_rewards_v2` | p_period_type, p_period_identifier, p_force, p_preview_only, p_admin_id | jsonb | Distribue les recompenses leaderboard avec tiers configurables |
 | `distribute_quest_reward` | p_quest_progress_id, p_admin_id | json | Distribue les recompenses pour une quete completee |
 | `distribute_quest_rewards` | - | trigger | Trigger: distribue recompenses quand quete completee |
+| `expire_quest_progress` | - | json | Expire les quest_progress dont la periode est terminee |
 | `get_coupon_stats` | - | jsonb | Retourne les statistiques globales des coupons |
 | `get_current_user_role` | - | text | Retourne le role de l'utilisateur courant |
 | `get_customer_available_coupons` | p_customer_id | TABLE | Recupere les coupons disponibles d'un client |
@@ -133,13 +134,14 @@ docs/docs/supabase/
 | `trigger_create_spending_on_cashback` | `receipt_lines` | `create_spending_from_cashback_payment` | Cree un spending lors d'un paiement cashback |
 | `trigger_quest_progress_on_receipt` | `receipts` | `trigger_update_quest_progress` | Met a jour la progression des quetes apres un receipt |
 
-### Jobs pg_cron (3)
+### Jobs pg_cron (4)
 
 | Job | Schedule | Commande | Description |
 |-----|----------|----------|-------------|
 | 1 | `5 0 * * 1` | `SELECT distribute_period_rewards_v2('weekly')` | Lundi 00:05 - Distribution hebdomadaire |
 | 2 | `10 0 1 * *` | `SELECT distribute_period_rewards_v2('monthly')` | 1er du mois 00:10 - Distribution mensuelle |
 | 3 | `15 0 1 1 *` | `SELECT distribute_period_rewards_v2('yearly')` | 1er janvier 00:15 - Distribution annuelle |
+| 6 | `0 0 * * *` | `SELECT expire_quest_progress()` | Tous les jours a minuit - Expiration quetes non completees |
 
 ### Vues Materialisees (4)
 

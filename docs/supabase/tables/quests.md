@@ -18,7 +18,7 @@ Definition des quetes periodiques disponibles
 | `name` | `character varying(255)` | Non | - | - |
 | `description` | `text` | Oui | - | - |
 | `slug` | `character varying(100)` | Non | - | - |
-| `quest_type` | `quest_type` (enum) | Non | - | Type de quête: `xp_earned` (gagner X XP), `amount_spent` (dépenser X centimes), `establishments_visited` (visiter X établissements), `orders_count` (passer X commandes) |
+| `quest_type` | `quest_type` (enum) | Non | - | Type de quête: `xp_earned` (gagner X XP), `amount_spent` (dépenser X centimes), `establishments_visited` (visiter X établissements), `orders_count` (passer X commandes), `quest_completed` (compléter des quêtes dans X sous-périodes) |
 | `target_value` | `integer` | Non | - | Objectif a atteindre (nombre de tickets, XP, ou etablissements) |
 | `period_type` | `character varying(20)` | Non | - | - |
 | `coupon_template_id` | `bigint` | Oui | - | - |

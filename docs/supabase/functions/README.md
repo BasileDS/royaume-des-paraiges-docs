@@ -42,6 +42,7 @@ Cette section documente toutes les fonctions PostgreSQL disponibles dans le sche
 | `handle_user_delete` | - | `trigger` | VOLATILE | Oui |
 | `sync_auth_to_profiles` | - | `TABLE(synced_count integer, user_ids text[])` | VOLATILE | Oui |
 | `trigger_update_quest_progress` | - | `trigger` | VOLATILE | Oui |
+| `update_meta_quest_progress` | p_customer_id uuid, p_completed_quest_period_type varchar | `void` | VOLATILE | Oui |
 | `update_profile_from_auth` | user_id uuid | `void` | VOLATILE | Oui |
 | `update_quest_progress_for_receipt` | p_receipt_id bigint | `json` | VOLATILE | Oui |
 | `validate_coupons` | p_customer_id uuid, p_coupon_ids bigint[] | `jsonb` | VOLATILE | Non |
@@ -60,7 +61,7 @@ Attribue un badge à un utilisateur pour une période donnée
 
 ### calculate_quest_progress
 
-Calcule la progression actuelle d'un utilisateur pour une quete donnee
+Calcule la progression actuelle d'un utilisateur pour une quete donnee. Supporte les types `xp_earned`, `amount_spent`, `establishments_visited`, `orders_count` et `quest_completed`. Pour `quest_completed`, compte le nombre de sous-périodes distinctes (weekly pour monthly, monthly pour yearly) avec au moins 1 quête complétée dans `quest_completion_logs`.
 
 - **Arguments**: `p_customer_id uuid, p_quest_id bigint, p_period_identifier character varying DEFAULT NULL::character varying`
 - **Retour**: `integer`
@@ -157,7 +158,7 @@ Distribue les recompenses pour une quete completee
 
 ### distribute_quest_rewards
 
-Fonction trigger declenchee quand le statut d'un `quest_progress` passe a `completed`. Cree automatiquement les coupons (bonus cashback si montant fixe), attribue les badges, donne les bonus XP/cashback directs, et logue dans `quest_completion_logs`. Met le statut a `rewarded` et `rewarded_at` apres traitement.
+Fonction trigger declenchee quand le statut d'un `quest_progress` passe a `completed`. Cree automatiquement les coupons (bonus cashback si montant fixe), attribue les badges, donne les bonus XP/cashback directs, et logue dans `quest_completion_logs`. Met le statut a `rewarded` et `rewarded_at` apres traitement. Appelle ensuite `update_meta_quest_progress()` pour propager la completion aux meta-quetes (`quest_completed`).
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`
@@ -277,6 +278,14 @@ Synchronise tous les utilisateurs de auth.users vers public.profiles. Retourne l
 Met à jour un profil existant avec les données de auth.users
 
 - **Arguments**: `user_id uuid`
+- **Retour**: `void`
+
+
+### update_meta_quest_progress
+
+Met à jour la progression des méta-quêtes (`quest_completed`) suite à la complétion d'une quête. Détermine le type de période parent (weekly→monthly, monthly→yearly), puis pour chaque quête active de type `quest_completed` du bon period_type, recalcule la progression et crée/met à jour l'entrée `quest_progress`. La chaîne est naturellement limitée : weekly → monthly → yearly → fin.
+
+- **Arguments**: `p_customer_id uuid, p_completed_quest_period_type varchar`
 - **Retour**: `void`
 
 

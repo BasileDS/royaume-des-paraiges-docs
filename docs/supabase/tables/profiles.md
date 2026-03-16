@@ -28,6 +28,7 @@ Pas de description disponible.
 | `role` | `user_role` | Non | 'client'::user_role | - |
 | `xp_coefficient` | `integer` | Non | 100 | - |
 | `cashback_coefficient` | `integer` | Non | 100 | - |
+| `is_test` | `boolean` | Non | false | Comptes test exclus des classements et distributions de recompenses |
 
 ## Cles primaires
 

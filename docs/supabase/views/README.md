@@ -7,7 +7,7 @@ Les vues materialisees stockent les resultats et doivent etre rafraichies period
 
 ### monthly_xp_leaderboard
 
-Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour récupérer username, nom, etc.
+Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour récupérer username, nom, etc. Exclut les comptes test (`profiles.is_test = true`).
 
 ```sql
  SELECT r.customer_id,
@@ -18,8 +18,10 @@ Leaderboard mensuel (1er au dernier jour du mois). Joindre avec profiles pour r�
     min(r.created_at) AS first_receipt_at,
     row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank
    FROM receipts r
+     JOIN profiles p ON p.id = r.customer_id
      LEFT JOIN gains g ON g.receipt_id = r.id
   WHERE r.created_at >= date_trunc('month'::text, now()) AND r.created_at < (date_trunc('month'::text, now()) + '1 mon'::interval)
+    AND NOT p.is_test
   GROUP BY r.customer_id
  HAVING COALESCE(sum(g.xp), 0::bigint) > 0
   ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));
@@ -51,7 +53,7 @@ Joint directement `profiles → gains` via `customer_id` (au lieu de passer par 
 
 ### weekly_xp_leaderboard
 
-Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupérer username, nom, etc.
+Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupérer username, nom, etc. Exclut les comptes test (`profiles.is_test = true`).
 
 ```sql
  SELECT r.customer_id,
@@ -62,8 +64,10 @@ Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupére
     min(r.created_at) AS first_receipt_at,
     row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank
    FROM receipts r
+     JOIN profiles p ON p.id = r.customer_id
      LEFT JOIN gains g ON g.receipt_id = r.id
   WHERE r.created_at >= date_trunc('week'::text, now()) AND r.created_at < (date_trunc('week'::text, now()) + '7 days'::interval)
+    AND NOT p.is_test
   GROUP BY r.customer_id
  HAVING COALESCE(sum(g.xp), 0::bigint) > 0
   ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));
@@ -72,7 +76,7 @@ Leaderboard hebdomadaire (lundi-dimanche). Joindre avec profiles pour récupére
 
 ### yearly_xp_leaderboard
 
-Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour récupérer username, nom, etc.
+Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour récupérer username, nom, etc. Exclut les comptes test (`profiles.is_test = true`).
 
 ```sql
  SELECT r.customer_id,
@@ -83,8 +87,10 @@ Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour ré
     min(r.created_at) AS first_receipt_at,
     row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))) AS rank
    FROM receipts r
+     JOIN profiles p ON p.id = r.customer_id
      LEFT JOIN gains g ON g.receipt_id = r.id
   WHERE r.created_at >= date_trunc('year'::text, now()) AND r.created_at < (date_trunc('year'::text, now()) + '1 year'::interval)
+    AND NOT p.is_test
   GROUP BY r.customer_id
  HAVING COALESCE(sum(g.xp), 0::bigint) > 0
   ORDER BY (row_number() OVER (ORDER BY (COALESCE(sum(g.xp), 0::bigint)) DESC, (min(r.created_at))));

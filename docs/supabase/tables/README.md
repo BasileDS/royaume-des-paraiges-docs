@@ -58,7 +58,7 @@ La base de données contient **33 tables** dans le schéma `public`. Toutes les 
 └─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐
-│   Contenu (migré depuis Directus)       │
+│   Contenu (tables de contenu)             │
 ├─────────────────────────────────────────┤
 │   breweries ──► beers                   │
 │                    │                    │
@@ -128,7 +128,7 @@ La base de données contient **33 tables** dans le schéma `public`. Toutes les 
 | [quest_periods](./quest_periods.md) | Liaison quêtes-périodes | quests |
 | [available_periods](./available_periods.md) | Périodes disponibles | - |
 
-### Tables de Contenu (migrées depuis Directus)
+### Tables de Contenu
 
 | Table | Description | FK vers |
 |-------|-------------|---------|

@@ -2,13 +2,13 @@
 
 ## Description
 
-Brasseries (migre depuis Directus).
+Brasseries.
 
 ## Schema
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | integer | Non | - | ID (identique a Directus) |
+| `id` | integer | Non | - | ID |
 | `title` | varchar | Non | - | Nom de la brasserie |
 | `country` | varchar | Oui | - | Pays d'origine |
 | `created_at` | timestamptz | Oui | now() | Date de creation |

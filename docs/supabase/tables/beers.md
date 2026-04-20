@@ -2,13 +2,13 @@
 
 ## Description
 
-Catalogue des bieres (migre depuis Directus).
+Catalogue des bieres.
 
 ## Schema
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | integer | Non | - | ID (identique a Directus) |
+| `id` | integer | Non | - | ID |
 | `title` | varchar | Non | - | Nom de la biere |
 | `description` | text | Oui | - | Description de la biere |
 | `featured_image` | text | Oui | - | URL de l'image |

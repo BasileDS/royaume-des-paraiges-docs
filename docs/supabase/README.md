@@ -55,7 +55,7 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 - `gains` - Gains XP/cashback (72 lignes)
 - `spendings` - Depenses cashback (1 ligne)
 
-### Contenu (migre depuis Directus)
+### Contenu
 - `beers` - Catalogue bieres (196 lignes)
 - `breweries` - Brasseries (66 lignes)
 - `beer_styles` - Styles de bieres (47 lignes)

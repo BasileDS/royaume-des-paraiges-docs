@@ -23,7 +23,7 @@ SET search_path TO 'public'
 | Paramètre | Type | Requis | Description |
 |-----------|------|--------|-------------|
 | `p_customer_id` | `UUID` | ✅ | ID du client (profiles.id) |
-| `p_establishment_id` | `BIGINT` | ✅ | ID de l'établissement (Directus) |
+| `p_establishment_id` | `BIGINT` | ✅ | ID de l'établissement |
 | `p_payment_methods` | `JSONB` | ✅ | Tableau des méthodes de paiement |
 | `p_coupon_ids` | `BIGINT[]` | ❌ | IDs des coupons à utiliser |
 | `p_employee_id` | `UUID` | ❌ | ID de l'employe createur. Si NULL, utilise auth.uid() |

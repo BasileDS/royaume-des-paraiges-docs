@@ -29,7 +29,7 @@ Le projet utilise **2 buckets** Supabase Storage pour stocker les fichiers.
 | **Limite de taille** | Aucune |
 | **Types MIME autorisés** | Tous |
 | **Créé le** | 2026-01-22 |
-| **Origine** | Migration Directus |
+| **Origine** | Tables de contenu |
 
 **URL publique** : `https://uflgfsoekkgegdgecubb.supabase.co/storage/v1/object/public/content-assets/`
 
@@ -46,7 +46,7 @@ content-assets/
     └── {news_id}.jpg          # Images des actualités
 ```
 
-**Note** : Ce bucket contient les images migrées depuis Directus. Les images sont référencées dans les tables `beers`, `establishments` et `news` via les colonnes `featured_image` et `logo`.
+**Note** : Ce bucket contient les images de contenu. Les images sont référencées dans les tables `beers`, `establishments` et `news` via les colonnes `featured_image` et `logo`.
 
 ---
 

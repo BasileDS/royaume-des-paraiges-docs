@@ -7,10 +7,9 @@ Ce repository contient la documentation technique de l'application **Royaume des
 ```
 docs/
 ├── claude/      # Guide de developpement IA
-├── supabase/    # Documentation Supabase (Backend & BDD)
-└── directus/    # Documentation Directus (CMS)
-
-migrations/      # Scripts SQL de migration Supabase
+├── qrcode/      # Documentation QR codes (generation + scan)
+├── rgpd/        # Documentation RGPD (registre, droits, securite)
+└── supabase/    # Documentation Supabase (Backend & BDD)
 
 scripts/         # Scripts utilitaires
 └── sync-supabase-docs.mjs  # Synchronisation auto documentation Supabase
@@ -44,11 +43,11 @@ Documentation relative à l'intégration et l'utilisation de Claude AI dans l'ap
 ### Supabase
 Documentation de la base de données, authentification, et services backend Supabase.
 
-### Directus
-Documentation du CMS Directus pour la gestion de contenu.
+### QR codes
+Documentation sur la génération et le scan des QR codes (PWA scanner, format).
 
-### Migrations
-Scripts SQL pour les migrations de la base de donnees Supabase. Voir [migrations/README.md](./migrations/README.md) pour les instructions d'execution.
+### RGPD
+Registre des traitements, droits utilisateurs, durées de conservation, sécurité, sous-traitants.
 
 ### Scripts
 

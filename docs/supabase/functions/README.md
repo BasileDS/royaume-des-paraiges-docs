@@ -251,7 +251,7 @@ Fonction trigger qui crée automatiquement un profil dans public.profiles lors d
 
 ### set_updated_at
 
-Fonction trigger generique qui met a jour la colonne `updated_at` a `now()` lors de la modification d'une ligne. Utilisee sur les tables de contenu migrees depuis Directus (breweries, establishments, beer_styles, beers, news, level_thresholds, etc.).
+Fonction trigger generique qui met a jour la colonne `updated_at` a `now()` lors de la modification d'une ligne. Utilisee sur les tables de contenu de contenu (breweries, establishments, beer_styles, beers, news, level_thresholds, etc.).
 
 - **Arguments**: `aucun`
 - **Retour**: `trigger`

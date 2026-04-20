@@ -523,7 +523,7 @@
             "nullable"
           ],
           "default_value": null,
-          "comment": "ID établissement Directus. NULL = valable partout"
+          "comment": "ID de l'établissement. NULL = valable partout"
         },
         {
           "name": "validity_days",

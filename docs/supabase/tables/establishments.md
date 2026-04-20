@@ -2,13 +2,13 @@
 
 ## Description
 
-Etablissements partenaires (migre depuis Directus).
+Etablissements partenaires.
 
 ## Schema
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | integer | Non | - | ID (identique a Directus) |
+| `id` | integer | Non | - | ID |
 | `title` | varchar | Non | - | Nom de l'etablissement |
 | `line_address_1` | varchar | Oui | - | Adresse ligne 1 |
 | `line_address_2` | varchar | Oui | - | Adresse ligne 2 |

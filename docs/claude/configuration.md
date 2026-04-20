@@ -24,7 +24,6 @@ Ce guide est destine aux assistants IA et developpeurs travaillant sur le projet
 - **Gestion d'etat**: Redux Toolkit 2.8.2 + React Redux 9.2.0
 - **Services Backend**:
   - **Supabase**: Authentification, base de donnees, stockage
-  - **Directus**: Systeme de gestion de contenu (CMS)
 
 ### Deploiement
 - **Web**: Vercel
@@ -49,7 +48,7 @@ royaume-paraiges-front/
 │
 ├── src/
 │   ├── core/                     # Fonctionnalites principales
-│   │   ├── api/                  # Clients API (Supabase, Directus)
+│   │   ├── api/                  # Clients API (Supabase)
 │   │   └── store/                # Configuration Redux store
 │   │
 │   ├── features/                 # Modules par fonctionnalite
@@ -123,7 +122,6 @@ Expo requiert le prefixe `EXPO_PUBLIC_`:
 ```env
 EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your_key
-EXPO_PUBLIC_DIRECTUS_URL=https://paraiges-directus.neodelta.dev
 ```
 
 ## Systeme d'Authentification
@@ -171,7 +169,6 @@ npm run type-check
 
 # Generer les types
 npm run supabase:types
-npm run directus:types
 ```
 
 ## Conventions de Code
@@ -203,15 +200,6 @@ npm run directus:types
   - Fonctions PostgreSQL
   - Triggers et vues materialisees
   - Schema relationnel complet
-
-#### Directus (CMS, Donnees de Contenu)
-- **`docs/directus/configuration.md`** - Configuration complete incluant:
-  - URL et configuration SDK
-  - Structure des collections
-  - Tables de jonction M2M
-  - Documentation des services
-  - Patterns de requetes
-  - Gestion des images
 
 ### Guidelines Generales
 

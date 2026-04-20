@@ -2,13 +2,13 @@
 
 ## Description
 
-Actualites (migre depuis Directus).
+Actualites.
 
 ## Schema
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | integer | Non | - | ID (identique a Directus) |
+| `id` | integer | Non | - | ID |
 | `title` | varchar | Non | - | Titre de l'actualite |
 | `content` | text | Oui | - | Contenu de l'actualite |
 | `featured_image` | text | Oui | - | URL de l'image principale |

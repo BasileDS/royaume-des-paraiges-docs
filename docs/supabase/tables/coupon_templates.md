@@ -19,7 +19,7 @@ Modèles de coupons réutilisables pour les récompenses
 | `description` | `text` | Oui | - | - |
 | `amount` | `integer` | Oui | - | Montant en centimes (ex: 1000 = 10€) |
 | `percentage` | `integer` | Oui | - | Pourcentage de réduction (ex: 15 = 15%) |
-| `establishment_id` | `integer` | Oui | - | ID établissement Directus. NULL = valable partout |
+| `establishment_id` | `integer` | Oui | - | ID de l'établissement. NULL = valable partout |
 | `validity_days` | `integer` | Oui | - | Jours de validité après attribution. NULL = pas d'expiration |
 | `is_active` | `boolean` | Oui | true | - |
 | `created_at` | `timestamp with time zone` | Oui | now() | - |

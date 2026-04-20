@@ -2,13 +2,13 @@
 
 ## Description
 
-Styles de bieres (migre depuis Directus, anciennement "styles").
+Styles de bieres.
 
 ## Schema
 
 | Colonne | Type | Nullable | Default | Description |
 |---------|------|----------|---------|-------------|
-| `id` | integer | Non | - | ID (identique a Directus) |
+| `id` | integer | Non | - | ID |
 | `title` | varchar | Non | - | Nom du style |
 | `description` | text | Oui | - | Description du style |
 | `created_at` | timestamptz | Oui | now() | Date de creation |

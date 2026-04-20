@@ -21,7 +21,6 @@ Cette section contient le guide de developpement pour les assistants IA (Claude)
 ## Backend Services
 
 - **Supabase**: Auth, Database, Storage
-- **Directus**: CMS (Content Management)
 
 ## Ressources
 

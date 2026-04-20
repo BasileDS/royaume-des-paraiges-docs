@@ -44,22 +44,22 @@ docs/docs/supabase/
 |-------|--------|-----|-------------|
 | `available_periods` | 130 | Oui | Periodes disponibles pour les quetes |
 | `badge_types` | 9 | Oui | Definitions des badges disponibles dans le systeme |
-| `beers` | 196 | Oui | Catalogue des bieres (migre depuis Directus) |
+| `beers` | 196 | Oui | Catalogue des bieres |
 | `beers_beer_styles` | 285 | Oui | Liaison M2M bieres-styles |
 | `beers_establishments` | 43 | Oui | Liaison M2M bieres-etablissements |
-| `beer_styles` | 47 | Oui | Styles de bieres (migre depuis Directus) |
-| `breweries` | 66 | Oui | Brasseries (migre depuis Directus) |
+| `beer_styles` | 47 | Oui | Styles de bieres |
+| `breweries` | 66 | Oui | Brasseries |
 | `comments` | 2 | Oui | Commentaires utilisateurs |
 | `constants` | 2 | Oui | Constantes systeme |
 | `coupon_distribution_logs` | 0 | Oui | Historique complet de toutes les distributions de coupons |
 | `coupon_templates` | 23 | Oui | Modeles de coupons reutilisables pour les recompenses |
 | `coupons` | 2 | Oui | Coupons utilisateurs |
-| `establishments` | 7 | Oui | Etablissements partenaires (migre depuis Directus) |
+| `establishments` | 7 | Oui | Etablissements partenaires |
 | `gains` | 58 | Oui | Gains XP et cashback |
 | `leaderboard_reward_distributions` | 0 | Oui | Historique des recompenses distribuees aux gagnants du leaderboard |
-| `level_thresholds` | 30 | Oui | Seuils de niveaux utilisateur (migre depuis Directus) |
+| `level_thresholds` | 30 | Oui | Seuils de niveaux utilisateur |
 | `likes` | 8 | Oui | Likes utilisateurs |
-| `news` | 2 | Oui | Actualites (migre depuis Directus) |
+| `news` | 2 | Oui | Actualites |
 | `news_establishments` | 3 | Oui | Liaison M2M news-etablissements |
 | `notes` | 0 | Oui | Notes utilisateurs |
 | `period_closures` | 1 | Oui | Tracking des periodes de leaderboard fermees et recompenses distribuees |

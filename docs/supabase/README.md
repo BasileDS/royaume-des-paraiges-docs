@@ -15,10 +15,11 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 
 ## Resume
 
-- **34 tables** public avec RLS active
-- **40 fonctions** PostgreSQL
+- **36 tables** public avec RLS active
+- **44 fonctions** PostgreSQL (incluant `check_quest_redundancy` + 3 trigger functions)
 - **4 vues materialisees** (leaderboards, stats)
-- **3 triggers** automatiques
+- **2 vues** (reward_distribution_stats, avg_ticket_12m)
+- **4 triggers** automatiques (voir `triggers/README.md`)
 - **3 jobs pg_cron** pour distributions automatiques
 - **2 buckets storage** (avatars, content-assets)
 - **1 edge function** (send-contact-email)
@@ -74,11 +75,13 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 
 ### Configuration
 - `legal_pages` - Pages legales (2 lignes)
+- `admin_settings` - Parametrage admin key-value JSONB (2 lignes)
 
 ### Tables de liaison (M2M)
 - `beers_establishments` - Bieres-Etablissements (43 lignes)
 - `beers_beer_styles` - Bieres-Styles (285 lignes)
 - `news_establishments` - News-Etablissements (3 lignes)
+- `quests_establishments` - Scoping quetes par etablissement (0 ligne, quetes globales par defaut)
 
 ## Migrations
 
@@ -92,4 +95,6 @@ Les 72 migrations SQL sont appliquees automatiquement. Les dernieres concernent 
 
 ## Derniere mise a jour
 
-- **Date**: 2026-02-19
+- **Date**: 2026-04-22
+- **Migration 020** — Prerequis prevention quetes redondantes : tables `quests_establishments`, `admin_settings`, vue `avg_ticket_12m`.
+- **Migration 021** — Triggers de detection : fonction `check_quest_redundancy` + 3 triggers (errcode `P0421`) bloquant toute activation/scope creant une redondance.

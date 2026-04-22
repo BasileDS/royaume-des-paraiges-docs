@@ -2,6 +2,17 @@
 
 Définition des quêtes périodiques disponibles. Modèle template récurrent : une quête est instanciée par utilisateur × période via `quest_progress`.
 
+## Terminologie produit
+
+La table `quests` couvre (à terme) deux réalités produit distinctes. Les noms techniques (`quests`, `quest_progress`, `quest_type`, RPC) restent inchangés ; la distinction est fonctionnelle.
+
+| Produit | Implémentation BDD | État |
+|---------|--------------------|------|
+| **Défi** (quête récurrente) | `quests.period_type ∈ {weekly, monthly, yearly}` + `quest_progress` remis à zéro à chaque période | ✅ en prod |
+| **Mission** (quête ponctuelle, one-shot) | À définir (modèle différé — pas encore implémenté) | ⏳ à venir |
+
+Le mot **quête** reste acceptable dans la doc **uniquement** si on précise « quête récurrente » (défi) ou « quête ponctuelle » (mission) — seul, il est ambigu.
+
 ## Informations
 
 | Propriete | Valeur |
@@ -98,5 +109,21 @@ Définition des quêtes périodiques disponibles. Modèle template récurrent : 
 | `weekly_3_softs` | soft | 3 |
 | `weekly_2_boissons_chaudes` | boisson_chaude | 2 |
 | `weekly_1_restauration` | restauration | 1 |
+
+## Scoping par établissement (M2M via `quests_establishments`)
+
+Depuis la migration 020 (avril 2026), une quête peut être scopée à un sous-ensemble d'établissements via la table [`quests_establishments`](./quests_establishments.md) :
+
+- **Aucune entrée** pour une quête = **quête globale** (applicable partout). C'est le défaut actuel pour toutes les quêtes.
+- **≥ 1 entrée** = **quête locale** (restreinte aux établissements listés).
+
+## Prévention des quêtes redondantes
+
+L'incident d'avril 2026 (multi-complétion sur un seul ticket, ratio PdB/ticket jusqu'à 241 %) a été causé par 14 quêtes hebdo avec seuils chevauchants (ex. 6 variantes `xp_earned weekly` de 60 à 200 XP). Le plan de prévention en 4 PR :
+
+- **PR#1** ✅ (migration 020) — prérequis structurels : `quests_establishments`, `admin_settings`, vue `avg_ticket_12m`.
+- **PR#2** ✅ (migration 021) — triggers PL/pgSQL `trg_quests_enforce_redundancy`, `trg_qe_enforce_redundancy_insert`, `trg_qe_enforce_redundancy_delete` s'appuyant sur la fonction [`check_quest_redundancy`](../functions/check_quest_redundancy.md). Bloquent toute activation ou modification de scope qui créerait une redondance signature-équivalente. Exception `P0421` avec DETAIL JSON parseable.
+- **PR#3** ✅ UX admin : picker M2M d'établissements (`components/establishments-picker.tsx`), interception des exceptions `P0421` via `lib/supabase/errorParser.ts` et modal `components/quest-conflict-dialog.tsx` sur les pages `/quests/create`, `/quests/[id]` et `/quests` (toggle d'activation).
+- **PR#4** ✅ Dashboard `/quests/health` (ratio bonus PdB / panier attendu + alertes) et page `/settings` (CRUD des clés `quest_alert_ratio_pct` et `quest_reference_prices_cents`). Service `lib/services/adminSettingsService.ts`.
 
 Bonus standard : +25 XP / 2-5 €. Pas de badge attaché en V1.

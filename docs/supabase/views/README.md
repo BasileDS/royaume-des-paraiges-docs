@@ -97,7 +97,21 @@ Leaderboard annuel (1er janvier au 31 décembre). Joindre avec profiles pour ré
 ```
 
 
-## Vues (1)
+## Vues (2)
+
+
+### avg_ticket_12m
+
+Panier moyen des tickets sur les 12 derniers mois, hors comptes de test (`profiles.is_test = true`). Utilisé par la PR#4 (dashboard santé des quêtes) pour calculer le ratio des quêtes non-consommation (`orders_count`, `establishments_visited`) — les autres types de quêtes utilisent soit un prix de référence par `consumption_type` (table `admin_settings`), soit sont exclues du check (cas `xp_earned` et `quest_completed`).
+
+```sql
+ SELECT COALESCE(avg(r.amount), 0::numeric)::integer AS avg_ticket_cents,
+    count(*) AS sample_size
+   FROM receipts r
+     JOIN profiles p ON p.id = r.customer_id
+  WHERE r.created_at >= (now() - '12 mons'::interval)
+    AND p.is_test IS NOT TRUE;
+```
 
 
 ### reward_distribution_stats

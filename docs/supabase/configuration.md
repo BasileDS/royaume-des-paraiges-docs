@@ -80,7 +80,7 @@ docs/docs/supabase/
 | Enum | Valeurs |
 |------|---------|
 | `payment_method` | card, cash, cashback, coupon |
-| `quest_type` | xp_earned, amount_spent, establishments_visited, orders_count |
+| `quest_type` | xp_earned, amount_spent (déprécié), cashback_earned, establishments_visited, orders_count, quest_completed, consumption_count |
 | `user_role` | client, employee, establishment, admin |
 
 ### Fonctions PostgreSQL (39)

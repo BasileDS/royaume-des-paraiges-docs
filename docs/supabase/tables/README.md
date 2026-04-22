@@ -47,7 +47,7 @@ La base de données contient **33 tables** dans le schéma `public`. Toutes les 
 └─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐
-│   Système de Quêtes                     │
+│   Système de Quêtes (défis / missions)  │
 ├─────────────────────────────────────────┤
 │   quests ──► quest_progress             │
 │      │              │                   │
@@ -56,6 +56,8 @@ La base de données contient **33 tables** dans le schéma `public`. Toutes les 
 │                                         │
 │   available_periods                     │
 └─────────────────────────────────────────┘
+
+> **Terminologie produit** : les tables `quests` / `quest_progress` couvrent les **défis** (quêtes récurrentes, weekly/monthly/yearly — seul modèle implémenté aujourd'hui). Les **missions** (quêtes ponctuelles, one-shot) sont un modèle différé. Le mot « quête » employé seul est ambigu — préciser « récurrente » ou « ponctuelle ». Voir `tables/quests.md` pour le détail.
 
 ┌─────────────────────────────────────────┐
 │   Contenu (tables de contenu)             │
@@ -189,9 +191,12 @@ Types de quêtes disponibles.
 ```sql
 CREATE TYPE quest_type AS ENUM (
   'xp_earned',              -- Gagner X XP
-  'amount_spent',           -- Dépenser X€
+  'amount_spent',           -- Dépenser X centimes (déprécié depuis migrations 028/029)
   'establishments_visited', -- Visiter X établissements
-  'orders_count'            -- Passer X commandes
+  'orders_count',           -- Passer X commandes
+  'quest_completed',        -- Compléter N sous-périodes de quêtes
+  'consumption_count',      -- Consommer X produits du type consumption_type
+  'cashback_earned'         -- Collecter X Paraiges de Bronze (migration 028)
 );
 ```
 

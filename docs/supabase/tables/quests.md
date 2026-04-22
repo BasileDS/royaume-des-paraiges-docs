@@ -30,9 +30,9 @@ Le mot **quête** reste acceptable dans la doc **uniquement** si on précise « 
 | `description` | `text` | Oui | - | Description fonctionnelle courte |
 | `lore` | `text` | Oui | - | Texte narratif immersif (~150 chars), affiché dans la modale côté client |
 | `slug` | `varchar(100)` | Non | - | Identifiant unique (UNIQUE) |
-| `quest_type` | enum `quest_type` | Non | - | 6 valeurs (cf. ci-dessous) |
+| `quest_type` | enum `quest_type` | Non | - | 7 valeurs (cf. ci-dessous) |
 | `consumption_type` | enum `consumption_type` | Oui | - | **Obligatoire ssi `quest_type = 'consumption_count'`** (CHECK constraint). Sinon NULL. |
-| `target_value` | `integer` | Non | - | Objectif à atteindre. Pour `amount_spent`, en **centimes** (50 € = 5000). |
+| `target_value` | `integer` | Non | - | Objectif à atteindre. Pour `amount_spent` (déprécié), en **centimes** (50 € = 5000). Pour `cashback_earned`, directement en **PdB** (50 PdB = 50). |
 | `period_type` | `varchar(20)` | Non | - | `weekly` / `monthly` / `yearly` |
 | `coupon_template_id` | `bigint` | Oui | - | FK → `coupon_templates`. Récompense en bonus PdB direct ou coupon % à la complétion. |
 | `badge_type_id` | `bigint` | Oui | - | FK → `badge_types`. Badge attribué à la complétion. |
@@ -49,7 +49,8 @@ Le mot **quête** reste acceptable dans la doc **uniquement** si on précise « 
 | Valeur | Description |
 |---|---|
 | `xp_earned` | Gagner X XP sur la période |
-| `amount_spent` | Dépenser X centimes sur la période |
+| `amount_spent` | **Déprécié depuis avril 2026 (migrations 028/029)** — Dépenser X centimes sur la période. Conservé dans l'enum pour compatibilité/usage futur côté admin. Retiré de l'UI de création. |
+| `cashback_earned` | Collecter X Paraiges de Bronze (1 PdB = 1 centime) sur la période. Progression = SUM(`gains.cashback_money`), coefficient client + bonus coupons inclus. Ajouté en migration 028. |
 | `establishments_visited` | Visiter X établissements distincts sur la période |
 | `orders_count` | Passer X commandes sur la période |
 | `quest_completed` | Compléter au moins 1 quête dans X sous-périodes (`monthly→weekly`, `yearly→monthly`). **Incompatible avec `weekly`**. |
@@ -79,7 +80,7 @@ Le mot **quête** reste acceptable dans la doc **uniquement** si on précise « 
 
 ## Fonctions liées
 
-- `calculate_quest_progress(p_customer_id, p_quest_id, p_period_identifier)` — calcule la progression actuelle pour un user × quête × période. Branche par `quest_type` (étendue avec `consumption_count` en migration 011).
+- `calculate_quest_progress(p_customer_id, p_quest_id, p_period_identifier)` — calcule la progression actuelle pour un user × quête × période. Branche par `quest_type` (étendue avec `consumption_count` en migration 011, puis `cashback_earned` en migration 029).
 - `update_quest_progress_for_receipt(p_receipt_id)` — appelée par `create_receipt`, propage les progressions à toutes les quêtes actives.
 - `distribute_quest_reward(p_quest_progress_id)` — attribue le coupon + badge + bonus XP/cashback à la complétion.
 
@@ -94,7 +95,7 @@ Le mot **quête** reste acceptable dans la doc **uniquement** si on précise « 
 | 27 | `500xp_pour_15` | xp_earned | monthly | 500 XP | +100 XP / 15 € | — |
 | 28 | `30_commandes_pour_12` | orders_count | monthly | 30 cmd | +100 XP / 15 € | — |
 | 30 | `monthly_tour_royaume` | establishments_visited | monthly | 3 tavernes | +50 XP / 5 € | quest_pelerin |
-| 31 | `monthly_le_bon_buveur` | amount_spent | monthly | 50 € | +50 XP / 10 € | — |
+| 31 | `monthly_le_bon_buveur` | cashback_earned | monthly | 50 PdB | +50 XP / 10 € | — |
 | 32 | `yearly_fidele_parmi_fideles` | quest_completed | yearly | 12 mois | +500 XP / 50 € | quest_fidele_legendary |
 
 ## Quêtes consumption hebdo prêtes mais désactivées (avril 2026)

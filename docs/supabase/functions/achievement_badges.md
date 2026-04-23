@@ -72,7 +72,11 @@ Grants : `authenticated`.
 
 ### `get_unseen_badges(p_customer_id uuid) RETURNS TABLE(...)`
 
-Retourne les lignes `user_badges` de ce client où `seen_at IS NULL`, joint `badge_types` pour exposer les métadonnées (slug, name, description, lore, icon, rarity, category, earned_at). Triées par `earned_at ASC` (FIFO pour la file de célébration).
+Retourne les lignes `user_badges` de ce client où `seen_at IS NULL`, joint `badge_types` pour exposer les métadonnées. Triées par `earned_at ASC` (FIFO pour la file de célébration).
+
+Colonnes retournées : `user_badge_id integer`, `badge_id integer`, `slug varchar`, `name varchar`, `description text`, `lore text`, `icon varchar`, `rarity varchar`, `category varchar`, `earned_at timestamptz`.
+
+> **Correctif 2026-04-23** — la signature initiale déclarait `user_badge_id bigint` alors que `user_badges.id` est `integer`. Postgres levait `42804 structure of query does not match function result type` sur chaque appel, ce qui cassait silencieusement la modale de célébration côté front. Migration correctrice : `fix_get_unseen_badges_return_type` (DROP + CREATE avec `user_badge_id integer`). Aucun impact sur les données. Si `mark_badges_seen` reste typé `bigint[]`, l'appel depuis le front continue de fonctionner par coercion implicite côté Postgres.
 
 Grants : `authenticated`.
 

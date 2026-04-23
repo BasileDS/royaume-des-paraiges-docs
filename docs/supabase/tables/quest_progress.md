@@ -1,6 +1,6 @@
 # Table: quest_progress
 
-Suivi de la progression des utilisateurs sur les quetes
+Suivi de la progression des utilisateurs sur les **défis** (quêtes récurrentes). Remis à zéro à chaque nouvelle période (`period_identifier`). Les **missions** (quêtes ponctuelles, one-shot) ne passent pas par cette table — modèle différé, voir `tables/quests.md` → « Terminologie produit ».
 
 ## Informations
 

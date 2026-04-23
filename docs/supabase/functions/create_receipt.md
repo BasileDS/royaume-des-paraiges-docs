@@ -126,10 +126,13 @@ SET search_path TO 'public'
 10. **Ajout du bonus cashback coupon** - Si coupon %, ajoute `total_amount * percentage / 100` au cashback
 11. **Création du gain** (avec `customer_id` et `source_type='receipt'`)
 12. **Mise à jour de la progression des quêtes** - Via `update_quest_progress_for_receipt()`
+12b. **Attribution realtime des badges succès** - Via `award_achievements_for_user(p_customer_id, 'realtime')` (migration `026`, avril 2026). **Encapsulé dans un bloc `BEGIN...EXCEPTION WHEN OTHERS THEN RAISE WARNING`** : un échec ici ne casse JAMAIS la création du ticket (le handler global aurait sinon capturé l'erreur et renvoyé `{success: false}`).
 13. **Marquage des coupons utilisés**
 14. **Rafraîchissement des vues matérialisées**
 
 > **Note** : La mise à jour des quêtes (étape 12) est appelée explicitement après la création des gains pour garantir que les quêtes de type `xp_earned` puissent calculer correctement la progression XP.
+>
+> **Note achievements** : l'étape 12b ne traite que les badges achievement en mode `realtime`. Les badges en mode `cron` (ex: `achievement_consecutive_weekly_quests_4`) sont évalués par le job pg_cron `award_achievements_cron` à 02:00 UTC. Cf. `functions/achievement_badges.md`.
 
 ## Exemple d'Utilisation
 

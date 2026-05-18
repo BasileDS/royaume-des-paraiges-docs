@@ -4,10 +4,12 @@
 
 Cette section documente l'utilisation de Supabase comme backend pour le Royaume des Paraiges.
 
-**Project ID**: `uflgfsoekkgegdgecubb`
-**URL API**: `https://uflgfsoekkgegdgecubb.supabase.co`
-**Region**: us-east-2
+**Project ID**: `kioysoveqemzjolfwpnu` (IPDEV — migration le 13/05/2026, en phase d'observation)
+**URL API**: `https://kioysoveqemzjolfwpnu.supabase.co`
+**Region**: eu-west-3 (Paris)
 **PostgreSQL**: 17.6.1.003
+
+> **Note historique** : le projet Royaume `uflgfsoekkgegdgecubb` (us-east-2) reste référencé dans les anciens dumps et scripts. Toute nouvelle requête doit cibler IPDEV.
 
 ## Table des matieres
 
@@ -15,13 +17,16 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 
 ## Resume
 
-- **36 tables** public avec RLS active
-- **58 fonctions** PostgreSQL (incluant `check_quest_redundancy` + 3 trigger functions + 14 fonctions achievement ajoutées en migrations 022-026)
-- **4 vues materialisees** (leaderboards, stats)
-- **2 vues** (reward_distribution_stats, avg_ticket_12m)
+- **36 tables** public avec RLS active (table `notes` supprimée 18/05/2026, table `user_legal_consents` restaurée 18/05/2026)
+- **63 fonctions** PostgreSQL — incluant 5 nouvelles RPCs sécurisées (mai 2026) qui remplacent les accès directs aux MV :
+  - `get_current_xp_leaderboard`, `get_current_xp_rank` (leaderboards périodiques publics)
+  - `get_public_xp_leaderboard`, `get_public_user_xp` (XP all-time)
+  - `get_unspent_cashback_total` (dette PdB admin-only)
+- **4 vues materialisees** (`weekly_xp_leaderboard`, `monthly_xp_leaderboard`, `yearly_xp_leaderboard`, `user_stats`) — **fermées à l'API PostgREST** depuis 18/05/2026 ; lisibles uniquement via les RPC wrappers.
+- **6 vues** SQL (cashpad_health_*, public_profiles, avg_ticket_12m, reward_distribution_stats) — passées en `security_invoker=true` 18/05/2026.
 - **4 triggers** automatiques (voir `triggers/README.md`)
 - **4 jobs pg_cron** pour distributions automatiques (dont `award_achievements_cron` quotidien 02:00 UTC)
-- **2 buckets storage** (avatars, content-assets)
+- **2 buckets storage** (avatars, content-assets) — policies durcies 18/05/2026 (plus de listing public, plus d'écrasement d'avatars d'autrui)
 - **1 edge function** (send-contact-email)
 - **4 enums** personnalises (consumption_type, payment_method, quest_type, user_role)
 
@@ -67,14 +72,15 @@ Cette section documente l'utilisation de Supabase comme backend pour le Royaume 
 ### Social
 - `likes` - Likes (29 lignes)
 - `comments` - Commentaires (2 lignes)
-- `notes` - Notes
+- ~~`notes`~~ — **Supprimée 18/05/2026** (orpheline, 0 ligne, jamais utilisée)
 
 ### Autres
 - `badge_types` - Types de badges (20 lignes : 9 classement + 6 saison + 5 succès)
 - `constants` - Constantes systeme (2 lignes)
 
 ### Configuration
-- `legal_pages` - Pages legales (2 lignes)
+- `legal_pages` - Pages legales (3 lignes, colonne `version` ajoutée 15/05/2026 — bump force re-acceptation)
+- `user_legal_consents` - Journal d'acceptation versionnée des documents légaux (immuable, RLS user-self) — restaurée 18/05/2026
 - `admin_settings` - Parametrage admin key-value JSONB (2 lignes)
 
 ### Tables de liaison (M2M)
@@ -94,6 +100,44 @@ Les 72 migrations SQL sont appliquees automatiquement. Les dernieres concernent 
 - [Dashboard](https://app.supabase.com)
 
 ## Derniere mise a jour
+
+### Hardening sécurité post-migration IPDEV (16-18 mai 2026)
+
+Audit Supabase advisors complet : **180 warnings → 38 warnings, 0 ERROR**. Tous les warnings restants sont intentionnels et documentés (RPCs publiques légitimes + check rôle interne dans les fonctions admin/self-only que le linter ne sait pas inspecter).
+
+**Migrations BDD appliquées** (16 migrations, sans préfixe numérique — voir `supabase_migrations.schema_migrations`) :
+
+- `restore_constants_public_read_policy` — fix bug `/storytelling` (policy SELECT sur `constants` perdue au pg_dump)
+- `security_drop_orphan_notes_table` — DROP table `notes` (orpheline, 0 ligne)
+- `security_add_missing_admin_policies` — policies admin SELECT sur `cashpad_webhook_queue`, `season_closure_log`, `season_snapshots`
+- `security_invoker_views_and_revoke_anon` — 5 vues passées en `security_invoker=true`, REVOKE anon sur vues admin
+- `security_set_function_search_path` — `SET search_path = public, pg_temp` sur 36 fonctions (anti privilege-escalation via shadowing `pg_temp`)
+- `security_revoke_internal_function_execute_public` — REVOKE EXECUTE FROM PUBLIC sur 34 fonctions internes
+- `security_restrict_authenticated_only_functions` + `security_revoke_anon_from_admin_functions` — REVOKE FROM anon sur 26 RPCs admin/authenticated
+- `restore_badge_types_admin_policy` — policy admin perdue au pg_dump (fix 403 création de badge)
+- `resolve_credit_bonus_cashback_overload_ambiguity` — DROP `credit_bonus_cashback(uuid,integer,bigint,varchar)` 4-arg (fix erreur 400 ambiguïté)
+- `security_storage_drop_laxist_avatar_policies` — fix trou de sécu : n'importe quel user pouvait écraser l'avatar d'autrui
+- `security_storage_block_bucket_listing` — DROP policies publiques de LIST sur buckets `avatars` et `content-assets`
+- `security_user_stats_rpc_wrappers` + `security_revoke_user_stats_matview` + `security_revoke_anon_from_new_rpc_wrappers` — création de `get_public_xp_leaderboard`, `get_public_user_xp`, `get_unspent_cashback_total` + fermeture de la MV `user_stats`
+- `security_revoke_xp_leaderboard_matviews` (18/05) — création de [`get_current_xp_leaderboard`](./functions/get_current_xp_leaderboard.md) et [`get_current_xp_rank`](./functions/get_current_xp_rank.md), fermeture des 3 MV `*_xp_leaderboard` (filtrage `*_total_spent` au passage : règle « zéro euro côté client »)
+- `restore_legal_versioning_structure` (18/05) — restauration de `legal_pages.version` et de la table [`user_legal_consents`](./tables/user_legal_consents.md), perdues au pg_dump du 13/05. Backfill v1.0 depuis `profiles.terms_accepted_at` (filtré par jointure `auth.users` pour ignorer les 8 profils anonymisés RGPD).
+
+**Vues SECURITY DEFINER corrigées** (5 vues passées en `security_invoker=true`) :
+- `public_profiles`, `avg_ticket_12m`, `cashpad_clock_drift`, `cashpad_window_feedback`, `cashpad_health_stats_30d`
+
+**Activé manuellement côté Dashboard** :
+- HaveIBeenPwned password protection (Authentication → Sign In / Up → Email → Password Protection)
+
+**Code applicatif refactoré** :
+- `royaume-paraiges-front/src/features/gains/services/leaderboardService.ts` : 6 `from('*_xp_leaderboard')` → 2 helpers RPC privés (`fetchCurrentLeaderboard`, `fetchUserRank`)
+- `royaume-paraiges-admin/src/lib/services/userService.ts` : 3 `from('*_xp_leaderboard')` → 3 `rpc('get_current_xp_rank')`
+- `royaume-paraiges-front/src/features/auth/services/clientService.ts` : `from('user_stats')` → `rpc('get_public_user_xp')`
+- `royaume-paraiges-scanner/src/lib/services/clientService.ts` : `from('user_stats').single()` → `rpc('get_user_stats')` avec mapping array→object
+- `royaume-paraiges-admin/src/lib/services/analyticsService.ts` : `from('user_stats')` + agg client-side → `rpc('get_unspent_cashback_total')`
+- `royaume-paraiges-admin/src/app/(dashboard)/quests/_form/QuestForm.tsx` : Zod `superRefine` pour valider qu'au moins une récompense est configurée (fix 400 BDD `quests.has_reward`)
+- Scripts `supabase:types` corrigés (front + scanner pointaient encore vers l'ancien `uflgfsoekkgegdgecubb`)
+
+### Historique antérieur
 
 - **Date**: 2026-04-22
 - **Migration 020** — Prerequis prevention quetes redondantes : tables `quests_establishments`, `admin_settings`, vue `avg_ticket_12m`.
